@@ -1,6 +1,6 @@
 from flask import Flask
 from .database import init_db
-from .models import create_tables
+from models.create_table import create_tables
 
 def create_app():
     app = Flask(__name__)
