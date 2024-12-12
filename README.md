@@ -8,7 +8,7 @@ Start server
     python app.py
 
 View Database
-(Sqlit db brower)[https://sqlitebrowser.org/dl/]
+[Sqlit db brower](https://sqlitebrowser.org/dl/)
 
 Test api with postman (public workspace)
-(Postman api)[https://www.postman.com/sorais/fisherfans/overview]
+[Postman api](https://www.postman.com/sorais/fisherfans/overview)
