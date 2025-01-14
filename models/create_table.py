@@ -16,5 +16,13 @@ def create_tables():
                     email TEXT NOT NULL,
                     password TEXT NOT NULL,
                     boat_license_number TEXT NOT NULL)''')
+    
+    cursor.execute('''CREATE TABLE IF NOT EXISTS boats
+                   (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    type INTEGER NOT NULL,
+                    capacity TEXT NOT NULL,
+                    location TEXT NOT NULL,
+                    owner_id TEXT NOT NULL)''')
     conn.commit()
     conn.close()
