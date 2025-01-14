@@ -15,9 +15,12 @@ def create_app():
     
     # Créer les tables nécessaires
     create_tables()
-    
-    # Enregistrer les blueprints
-    from .routes import main as main_blueprint
-    app.register_blueprint(main_blueprint)
+
+    # Enregistrement des blueprints
+    from routes.users import users as users_blueprint
+    app.register_blueprint(users_blueprint)
+
+    from routes.boat_routes import boat as boat_blueprint
+    app.register_blueprint(boat_blueprint)
     
     return app
