@@ -6,6 +6,14 @@ load_dotenv()
 
 db_instance = os.getenv("DB_INSTANCE")
 
+def login_user(email, password):
+    conn = sqlite3.connect(db_instance)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE email = ? AND password = ?", (email, password))
+    user = cursor.fetchone()
+    conn.close()
+    return user
+
 def add_user(lastName, firstName, email, password, boat_license_number):
     conn = sqlite3.connect(db_instance)
     cursor = conn.cursor()

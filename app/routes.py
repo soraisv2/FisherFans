@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session, redirect, url_for
 from .database import get_db
-from models.users import get_users, add_user, get_user, delete_user, modify_user
+from models.users import get_users, add_user, get_user, delete_user, modify_user, login_user
+from models.boat_model import add_boat, get_boats
 
 main = Blueprint('main', __name__)
 
@@ -38,6 +39,19 @@ def delete_table_route():
 
 
 #region Users
+
+@main.route('/login', methods=['POST'])
+def login_route():
+    data = request.get_json()
+    user = login_user(data['email'], data['password'])
+    if user:
+        print(user)
+        session['user_id'] = user[0]
+        session['email'] = user[3]
+        return jsonify({"message": "Users succefuly connected"}), 200
+    else:
+        return jsonify({"message": "Email ou mot de passe incorrect."}), 404
+
 
 @main.route('/add_user', methods=['POST'])
 def add_user_route():
@@ -96,4 +110,36 @@ def delete_user_route():
     else:
         return jsonify({"message": "Utilisateur non trouvé"}), 404
     
+#endregion
+
+#region Boats
+
+@main.route('/boat', methods=['POST'])
+def add_boat_route():
+    print(session)
+    if 'user_id' not in session:
+        return jsonify({"message": "You need to be connected to add a boat"}), 401
+    data = request.get_json()
+    add_boat(data['name'], data['type'], data['capacity'], data['location'])
+    return jsonify({"message": "Boat added succefuly !"}), 200
+
+@main.route('/boat', methods=['GET'])
+def get_boat_route():
+    data = request.get_json()
+
+    boat_type = data["type"] if "type" in data else None
+    boat_capacity = data["capacity"] if "capacity" in data else None
+    boats = get_boats(type=boat_type, capacity=boat_capacity)
+    if boats:
+        return jsonify({
+            "message": "Boats fetched successfully!",
+            "boats": boats
+        }), 200
+    else:
+        return jsonify({
+            "message": "No boats found with the given filters.",
+            "boats": []
+        }), 404
+
+
 #endregion
