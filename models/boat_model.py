@@ -15,3 +15,26 @@ def add_boat(name, type, capacity, location):
                    (name, type, capacity, location, owner_id))
     conn.commit()
     conn.close()
+
+def get_boats(type=None, capacity=None):
+    conn = sqlite3.connect(db_instance)
+    cursor = conn.cursor()
+    
+    # Base de la requête SQL
+    query = "SELECT * FROM boats WHERE 1=1"
+    params = []
+    
+    # Ajouter des filtres dynamiquement
+    if type:  # Si un type est fourni
+        query += " AND type = ?"
+        params.append(type)
+    if capacity:  # Si une capacité est fournie
+        query += " AND capacity = ?"
+        params.append(capacity)
+    
+    # Exécuter la requête
+    cursor.execute(query, tuple(params))
+    boats = cursor.fetchall()
+    
+    conn.close()
+    return boats
