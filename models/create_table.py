@@ -14,6 +14,7 @@ def create_tables():
                     lastName TEXT NOT NULL,
                     firstName INTEGER NOT NULL,
                     email TEXT NOT NULL,
-                    password TEXT NOT NULL)''')
+                    password TEXT NOT NULL,
+                    boat_license_number TEXT NOT NULL)''')
     conn.commit()
     conn.close()
