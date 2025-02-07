@@ -24,5 +24,19 @@ def create_tables():
                     capacity TEXT NOT NULL,
                     location TEXT NOT NULL,
                     owner_id TEXT NOT NULL)''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS reservation
+                   (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    utilisateur_id INTEGER NOT NULL,
+                    bateau_id INTEGER NOT NULL,
+                    sortie_peche_id INTEGER NOT NULL,
+                    date_reservation TEXT NOT NULL,
+                    statut TEXT NOT NULL,
+                    start_datetime TEXT NOT NULL,
+                    end_datetime TEXT NOT NULL,
+                    FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id),
+                    FOREIGN KEY (bateau_id) REFERENCES bateau(id),
+                    FOREIGN KEY (sortie_peche_id) REFERENCES sortie_peche(id))''')
+
     conn.commit()
     conn.close()

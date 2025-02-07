@@ -23,4 +23,6 @@ def create_app():
     from routes.boat_routes import boat as boat_blueprint
     app.register_blueprint(boat_blueprint)
     
+    from routes.reservation_routes import reservation as reservation_blueprint
+    app.register_blueprint(reservation_blueprint)
     return app
