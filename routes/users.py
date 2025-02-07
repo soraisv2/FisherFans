@@ -4,6 +4,8 @@ from models.users import get_users, add_user, get_user, delete_user, modify_user
 
 users = Blueprint('users', __name__)
 
+print("test")
+
 @users.route('/login', methods=['POST'])
 def login_route():
     data = request.get_json()
