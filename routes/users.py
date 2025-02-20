@@ -10,25 +10,17 @@ users = Blueprint('users', __name__)
 @users.route('/add_user', methods=['POST'])
 def add_user_route():
     data = request.get_json()
-    add_user(data['lastName'], data['firstName'], data['email'], data['password'], data['boat_license_number'])
-    return jsonify({"message": "Utilisateur ajouté avec succès !"})
-
-# @users.route('/login', methods=['POST'])
-# def login_route():
-#     data = request.get_json()
-#     user = login_user(data['email'], data['password'])
-#     if user:
-#         session['user_id'] = user[0]
-#         session['email'] = user[3]
-#         return jsonify({"message": "Users succefuly connected"}), 200
-#     else:
-#         return jsonify({"message": "Email ou mot de passe incorrect."}), 404
+    success, message = add_user(data['lastName'], data['firstName'], data['email'], data['password'], data['boat_license_number'])
+    if not success:
+        return jsonify({"message": message}), 409 # 409 = Conflict (email allready used)
+    else:
+        return jsonify({"message": message}), 201 # 201 = Created
 
 @users.route('/login', methods=['POST'])
 def login_route():
     data = request.get_json()  # Récupère les données envoyées (email, password)
-    user = login_user(data['email'], data['password'])  # Vérifie les identifiants en base
-    if user:
+    success, user = login_user(data['email'], data['password'])  # Vérifie les identifiants en base
+    if success:
         token = jwt.encode(
             {
                 'user_id': user[0],  # ID utilisateur
@@ -37,25 +29,29 @@ def login_route():
             current_app.config['SECRET_KEY'],  # Clé secrète pour signer le token
             algorithm='HS256'  # Algorithme de chiffrement
         )
-        return jsonify({"message": "Utilisateur connecté avec succès", "token": token}), 200
+        return jsonify({"message": "user successfully connected ✅", "token": token}), 200
     else:
-        return jsonify({"message": "Email ou mot de passe incorrect."}), 404
+        return jsonify({"message": "Incorrect email or password. 🛑"}), 404
 
 
 @users.route('/get_users', methods=['GET'])
+@token_required
 def get_users_route():
-    users = get_users()
-    user_list = []
-    for user in users:
-        user_dict = {
-            "id": user[0],
-            "nom": user[1],
-            "prenom": user[2],
-            "email": user[3],
-            "mot_de_passe": user[4]
-        }
-        user_list.append(user_dict)
-    return jsonify(user_list)
+    success, users = get_users()
+    if success:
+        user_list = []
+        for user in users:
+            user_dict = {
+                "id": user[0],
+                "nom": user[1],
+                "prenom": user[2],
+                "email": user[3],
+                "mot_de_passe": user[4]
+            }
+            user_list.append(user_dict)
+        return jsonify(user_list)
+    else:
+        return jsonify({"message": "Error while retrieving users. 🛑"}), 404
 
 @users.route('/get_user', methods=['GET'])
 @token_required
@@ -70,11 +66,12 @@ def get_user_route():
             "email": user[3],
             "mot_de_passe": user[4]
         }
-        return jsonify(user_dict)
+        return jsonify(user_dict), 200
     else:
-        return jsonify({"message": "Utilisateur non trouvé"}), 404
+        return jsonify({"message": "Error while retrieving user. 🛑"}), 404
 
 @users.route('/modify_user', methods=['PUT'])
+@token_required
 def modify_user_route():
     data = request.get_json()
     user = get_user(data["user_id"])
@@ -85,6 +82,7 @@ def modify_user_route():
         return jsonify({"message": "Utilisateur non trouvé"}), 404
 
 @users.route('/delete_user', methods=['DELETE'])
+@token_required
 def delete_user_route():
     data = request.get_json()
     user = get_user(data["user_id"])

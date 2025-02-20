@@ -6,37 +6,57 @@ load_dotenv()
 
 db_instance = os.getenv("DB_INSTANCE")
 
+def add_user(lastName, firstName, email, password, boat_license_number):
+    conn = sqlite3.connect(db_instance)
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT 1 FROM users WHERE email = ?", (email,))
+    if cursor.fetchone():
+        conn.close()
+        return False, "Cet email est déjà utilisé. 🛑"
+
+    cursor.execute("INSERT INTO users (lastName, firstName, email, password, boat_license_number) VALUES (?, ?, ?, ?, ?)", 
+                   (lastName, firstName, email, password, boat_license_number))
+    conn.commit()
+    conn.close()
+    return True, "Utilisateur ajouté avec succès ! ✅"
+
 def login_user(email, password):
     conn = sqlite3.connect(db_instance)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE email = ? AND password = ?", (email, password))
     user = cursor.fetchone()
     conn.close()
-    return user
-
-def add_user(lastName, firstName, email, password, boat_license_number):
-    conn = sqlite3.connect(db_instance)
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO users (lastName, firstName, email, password, boat_license_number) VALUES (?, ?, ?, ?, ?)", 
-                   (lastName, firstName, email, password, boat_license_number))
-    conn.commit()
-    conn.close()
+    if user:
+        return True, user
+    return False, None
 
 def get_users():
-    conn = sqlite3.connect(db_instance)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users")
-    users = cursor.fetchall()
-    conn.close()
-    return users
+    try:
+        conn = sqlite3.connect(db_instance)
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users")
+        users = cursor.fetchall()
+        return True, users
+    except sqlite3.Error:
+        return False, None
+    finally:
+        if conn:
+            conn.close()  
 
 def get_user(user_id):
-    conn = sqlite3.connect(db_instance)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-    user = cursor.fetchone()
-    conn.close()
-    return user
+    try:
+        conn = sqlite3.connect(db_instance)
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+        user = cursor.fetchone()
+        conn.close()
+        return user
+    except sqlite3.Error:
+        return None
+    finally:
+        if conn:
+            conn.close()
 
 def modify_user(user_id, lastName, firstName, email, boat_license_number):
     conn = sqlite3.connect(db_instance)
