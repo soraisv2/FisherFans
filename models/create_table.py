@@ -32,8 +32,10 @@ def create_tables():
                     sortie_peche_id INTEGER NOT NULL,
                     date_reservation TEXT NOT NULL,
                     statut TEXT NOT NULL,
+                    nbplace INTEGER NOT NULL,
                     start_datetime TEXT NOT NULL,
                     end_datetime TEXT NOT NULL,
+                    price FLOAT NOT NULL,
                     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id),
                     FOREIGN KEY (bateau_id) REFERENCES bateau(id),
                     FOREIGN KEY (sortie_peche_id) REFERENCES sortie_peche(id))''')

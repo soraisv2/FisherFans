@@ -50,3 +50,19 @@ def get_reservations(utilisateur_id=None, bateau_id=None, sortie_peche_id=None, 
     
     conn.close()
     return reservations
+
+def modify_reservation(reservation_id, bateau_id, sortie_id, date_reservation, start_datetime, end_datetime):
+    with sqlite3.connect(db_instance) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE reservation
+            SET bateau_id = ?, sortie_id = ?, date_reservation = ?, start_datetime = ?, end_datetime = ?
+            WHERE id = ?
+        """, (bateau_id, sortie_id, date_reservation, start_datetime, end_datetime, reservation_id))
+        conn.commit()
+
+def delete_reservation(reservation_id):
+    with sqlite3.connect(db_instance) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM reservations WHERE id = ?", (reservation_id))
+        conn.commit()

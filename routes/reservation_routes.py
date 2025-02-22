@@ -31,3 +31,24 @@ def get_reservation_route():
         return jsonify({
             "reservations": []
         }), 404
+
+@reservation.route('/<int:reservation_id>', methods=['DELETE'])
+def delete_reservation_route(reservation_id):
+    reservations.delete_reservation(reservation_id)
+    response = jsonify({"message": "Reservation deleted !"})
+    response.headers['Content-Type'] = 'application/json; charset=utf-8'
+    return response, 200
+
+
+@reservation.route('/<int:reservation_id>', methods=['PUT'])
+def modify_reservation_route(reservation_id):
+    data = request.get_json()
+
+    reservations.modify_reservation(
+        reservation_id=reservation_id,
+        bateau_id=data.get('bateau_id'),
+        sortie_id=data.get('sortie_id'),
+        date_reservation=data.get('date_reservation'),
+        start_datetime=data.get('start_datetime'),
+        end_datetime=data.get('end_datetime')
+    )
