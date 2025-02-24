@@ -1,58 +1,69 @@
 from flask import Blueprint, request, jsonify
-from models import fishing_trips  # Import the entire file, not the individual functions
+from models.fishing_trips import add_fishing_trip, get_fishing_trips, modify_fishing_trip, delete_fishing_trip, get_fishing_trip
 
+# Définir le blueprint
 fishing_trips_bp = Blueprint('fishing_trips', __name__)
 
-@fishing_trips_bp.route('/', methods=['POST'])
-def add_fishing_trip_route():
+# Route pour ajouter une sortie de pêche
+@fishing_trips_bp.route('/fishing_trips', methods=['POST'])
+def create_fishing_trip():
     data = request.get_json()
-    fishing_trips.add_fishing_trip(
-        date=data.get('date'),
-        location=data.get('location'),
-        fishing_type=data.get('fishing_type'),
-        boat_id=data.get('boat_id')
-    )
-    response = jsonify({"message": "Fishing trip added successfully!"})
-    response.headers['Content-Type'] = 'application/json; charset=utf-8'
-    return response, 201
+    date = data.get('date')
+    location = data.get('location')
+    fishing_type = data.get('fishing_type')
+    boat_id = data.get('boat_id')
 
-@fishing_trips_bp.route('/', methods=['GET'])
-def get_fishing_trips_route():
-    filters = request.args.to_dict()
-    trips = fishing_trips.get_fishing_trips(filters)
-    response = jsonify(trips)
-    response.headers['Content-Type'] = 'application/json; charset=utf-8'
-    return response, 200
+    # Vérifier si la sortie de pêche existe déjà
+    existing_trip = get_fishing_trips({"date": date, "location": location, "fishing_type": fishing_type})
+    if existing_trip:
+        return jsonify({"message": "Fishing trip already exists"}), 409  # Conflict
 
-@fishing_trips_bp.route('/<int:trip_id>', methods=['GET'])
-def get_fishing_trip_route(trip_id):
-    trip = fishing_trips.get_fishing_trip(trip_id)
-    if trip:
-        response = jsonify(trip)
-        response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        return response, 200
-    response = jsonify({"error": "Fishing trip not found"})
-    response.headers['Content-Type'] = 'application/json; charset=utf-8'
-    return response, 404
+    add_fishing_trip(date, location, fishing_type, boat_id)
+    return jsonify({"message": "Fishing trip added successfully"}), 201
 
-@fishing_trips_bp.route('/<int:trip_id>', methods=['PUT'])
-def modify_fishing_trip_route(trip_id):
-    data = request.get_json()
-
-    fishing_trips.modify_fishing_trip(
-        trip_id=trip_id,
-        date=data.get('date'),
-        location=data.get('location'),
-        fishing_type=data.get('fishing_type')
-    )
+# Route pour obtenir toutes les sorties de pêche (avec des filtres optionnels)
+@fishing_trips_bp.route('/fishing_trips', methods=['GET'])
+def get_all_fishing_trips():
+    filters = {}
+    if 'date' in request.args:
+        filters['date'] = request.args['date']
+    if 'fishing_type' in request.args:
+        filters['fishing_type'] = request.args['fishing_type']
     
-    response = jsonify({"message": "Fishing trip updated successfully!"})
-    response.headers['Content-Type'] = 'application/json; charset=utf-8'
-    return response, 200
+    trips = get_fishing_trips(filters)
+    return jsonify(trips)
 
-@fishing_trips_bp.route('/<int:trip_id>', methods=['DELETE'])
-def delete_fishing_trip_route(trip_id):
-    fishing_trips.delete_fishing_trip(trip_id)
-    response = jsonify({"message": "Fishing trip deleted successfully!"})
-    response.headers['Content-Type'] = 'application/json; charset=utf-8'
-    return response, 200
+# Route pour obtenir une sortie de pêche spécifique
+@fishing_trips_bp.route('/fishing_trips/<int:trip_id>', methods=['GET'])
+def get_fishing_trip_route(trip_id):
+    trip = get_fishing_trip(trip_id)
+    if trip:
+        return jsonify(trip)
+    return jsonify({"message": "Fishing trip not found"}), 404
+
+# Route pour modifier une sortie de pêche
+@fishing_trips_bp.route('/fishing_trips/<int:trip_id>', methods=['PUT'])
+def update_fishing_trip(trip_id):
+    data = request.get_json()
+    date = data.get('date')
+    location = data.get('location')
+    fishing_type = data.get('fishing_type')
+
+    # Vérifier si la sortie de pêche existe
+    trip = get_fishing_trip(trip_id)
+    if not trip:
+        return jsonify({"message": "Fishing trip not found"}), 404
+
+    modify_fishing_trip(trip_id, date, location, fishing_type)
+    return jsonify({"message": "Fishing trip updated successfully"}), 200
+
+# Route pour supprimer une sortie de pêche
+@fishing_trips_bp.route('/fishing_trips/<int:trip_id>', methods=['DELETE'])
+def delete_fishing_trip(trip_id):
+    # Vérifier si la sortie de pêche existe
+    trip = get_fishing_trip(trip_id)
+    if not trip:
+        return jsonify({"message": "Fishing trip not found"}), 404
+
+    delete_fishing_trip(trip_id)
+    return jsonify({"message": "Fishing trip deleted successfully"}), 200

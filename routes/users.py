@@ -70,6 +70,6 @@ def delete_user_route():
     user = get_user(data["user_id"])
     if user:
         delete_user(data["user_id"])
-        return jsonify({"message": f"Utilisateur avec l'id {data["user_id"]} supprimé avec succès !"})
+        return jsonify({"message": f"Utilisateur supprimé avec succès !"})
     else:
         return jsonify({"message": "Utilisateur non trouvé"}), 404
