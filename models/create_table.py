@@ -26,7 +26,8 @@ def create_tables():
                     type TEXT NOT NULL,  -- Modifié de INTEGER à TEXT pour 'type'
                     capacity TEXT NOT NULL,
                     location TEXT NOT NULL,
-                    owner_id INTEGER NOT NULL)''')  # Changement de type de 'owner_id' de TEXT à INTEGER pour correspondre à l'ID de l'utilisateur
+                    owner_id INTEGER NOT NULL,
+                    FOREIGN KEY (owner_id) REFERENCES users(id))''')
     
     # Création de la table 'fishing_trips'
     cursor.execute('''CREATE TABLE IF NOT EXISTS fishing_trips
@@ -36,7 +37,17 @@ def create_tables():
                     fishing_type TEXT NOT NULL,
                     boat_id INTEGER NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (boat_id) REFERENCES boats(id))''')  
+    
+    # Création de la table 'fishing_logs'
+    cursor.execute('''CREATE TABLE IF NOT EXISTS fishing_logs
+                   (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    fishing_trip_id INTEGER NOT NULL,
+                    fish_type TEXT NOT NULL,
+                    quantity INTEGER NOT NULL,
+                    catch_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (fishing_trip_id) REFERENCES fishing_trips(id))''')
     
     conn.commit()
     conn.close()
