@@ -22,5 +22,12 @@ def create_app():
 
     from routes.boat_routes import boat as boat_blueprint
     app.register_blueprint(boat_blueprint)
+
+    from routes.fishing_logs import fishing_logs_bp as fishing_logs_blueprint
+    app.register_blueprint(fishing_logs_blueprint)
     
+    from routes.fishing_trips import fishing_trips_bp as fishing_trips_blueprint
+    app.register_blueprint(fishing_trips_blueprint)
+
+
     return app
