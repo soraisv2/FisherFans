@@ -1,49 +1,89 @@
 import sqlite3
 import os
 from dotenv import load_dotenv
-from flask import request
 
 load_dotenv()
 
 db_instance = os.getenv("DB_INSTANCE")
 
+if not db_instance:
+    raise ValueError("DB_INSTANCE is not configured in the .env file")
+
 def add_boat(name, type, capacity, location, owner_id):
-    try:
-        conn = sqlite3.connect(db_instance)
+    with sqlite3.connect(db_instance) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT boat_license_number FROM users WHERE id = ?", (owner_id,))
-        result = cursor.fetchone()
-        if not result or not result[0]:
-            return False, "Boat license number not found for the user. 🛑"
-        cursor.execute("INSERT INTO boats (name, type, capacity, location, owner_id) VALUES (?, ?, ?, ?, ?)", 
-                    (name, type, capacity, location, owner_id))
+        cursor.execute("""
+            INSERT INTO boats (name, type, capacity, location, owner_id) 
+            VALUES (?, ?, ?, ?, ?)
+        """, (name, type, capacity, location, owner_id))
         conn.commit()
-        return True, "Boat added succefuly ! ✅"
-    except:
-        return False, "Error while adding boat 🛑"
-    finally:
-        if conn:
-            conn.close()
-
-def get_boats(type: str | None = None, capacity: int | None = None):
-    try:
-        conn = sqlite3.connect(db_instance)
-        cursor = conn.cursor()
-        query = "SELECT * FROM boats WHERE 1=1"
-        params = []
         
-        if type:
-            query += " AND type = ?"
-            params.append(type)
-        if capacity:
-            query += " AND capacity = ?"
-            params.append(capacity)
+        boat_id = cursor.lastrowid
+        
+    return {
+        "id": boat_id,
+        "name": name,
+        "type": type,
+        "capacity": capacity,
+        "location": location,
+        "owner_id": owner_id
+    }
 
-        cursor.execute(query, tuple(params))
+def get_boats(filters=None):
+    with sqlite3.connect(db_instance) as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        query = """
+            SELECT id, name, type, capacity, location, owner_id 
+            FROM boats
+        """
+        params = []
+
+        if filters:
+            conditions = []
+            if "type" in filters:
+                conditions.append("type = ?")
+                params.append(filters["type"])
+            if "capacity" in filters:
+                conditions.append("capacity >= ?")
+                params.append(filters["capacity"])
+            if conditions:
+                query += " WHERE " + " AND ".join(conditions)
+
+        cursor.execute(query, params)
         boats = cursor.fetchall()
-        return True, boats
-    except:
-        return False, None
-    finally:
-        if conn:
-            conn.close()
+
+        return [
+            {
+                "id": boat["id"],
+                "name": boat["name"],
+                "type": boat["type"],
+                "capacity": boat["capacity"],
+                "location": boat["location"],
+                "owner_id": boat["owner_id"]
+            }
+            for boat in boats
+        ]
+
+def get_boat(boat_id):
+    with sqlite3.connect(db_instance) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM boats WHERE id = ?", (boat_id,))
+        boat = cursor.fetchone()
+    return boat
+
+def modify_boat(boat_id, name, type, capacity, location):
+    with sqlite3.connect(db_instance) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE boats 
+            SET name = ?, type = ?, capacity = ?, location = ?
+            WHERE id = ?
+        """, (name, type, capacity, location, boat_id))
+        conn.commit()
+
+def delete_boat(boat_id):
+    with sqlite3.connect(db_instance) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM boats WHERE id = ?", (boat_id,))
+        conn.commit()

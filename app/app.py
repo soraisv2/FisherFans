@@ -20,7 +20,7 @@ def create_app():
     from routes.users import users as users_blueprint
     app.register_blueprint(users_blueprint)
 
-    from routes.boats import boat as boat_blueprint
+    from routes.boats import boats as boat_blueprint
     app.register_blueprint(boat_blueprint)
     
     return app
