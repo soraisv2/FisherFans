@@ -7,13 +7,13 @@ load_dotenv()
 
 db_instance = os.getenv("DB_INSTANCE")
 
-def add_reservation(utilisateur_id, bateau_id, sortie_peche_id, date_reservation, statut, start_datetime, end_datetime):
+def add_reservation(utilisateur_id, bateau_id, sortie_peche_id, date_reservation, statut, nbplace, start_datetime, end_datetime, price):
     conn = sqlite3.connect(db_instance)
     cursor = conn.cursor()
     cursor.execute('''INSERT INTO reservation 
-                      (utilisateur_id, bateau_id, sortie_peche_id, date_reservation, statut, start_datetime, end_datetime)
-                      VALUES (?, ?, ?, ?, ?, ?, ?)''', 
-                   (utilisateur_id, bateau_id, sortie_peche_id, date_reservation, statut, start_datetime, end_datetime))
+                      (utilisateur_id, bateau_id, sortie_peche_id, date_reservation, statut, nbplace, start_datetime, end_datetime, price)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
+                   (utilisateur_id, bateau_id, sortie_peche_id, date_reservation, statut, nbplace, start_datetime, end_datetime, price))
     
     conn.commit()
     conn.close()
@@ -64,5 +64,5 @@ def modify_reservation(reservation_id, bateau_id, sortie_id, date_reservation, s
 def delete_reservation(reservation_id):
     with sqlite3.connect(db_instance) as conn:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM reservations WHERE id = ?", (reservation_id))
+        cursor.execute("DELETE FROM reservation WHERE id = ?", (reservation_id,))
         conn.commit()
