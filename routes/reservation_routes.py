@@ -44,11 +44,20 @@ def delete_reservation_route(reservation_id):
 def modify_reservation_route(reservation_id):
     data = request.get_json()
 
-    modify_reservation(
+    success = modify_reservation(
         reservation_id=reservation_id,
         bateau_id=data.get('bateau_id'),
-        sortie_id=data.get('sortie_id'),
+        sortie_peche_id=data.get('sortie_peche_id'),
         date_reservation=data.get('date_reservation'),
         start_datetime=data.get('start_datetime'),
         end_datetime=data.get('end_datetime')
     )
+
+    if success:
+        response = jsonify({"message": "Reservation modifiée avec succès !"})
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        return response, 200
+    else:
+        response = jsonify({"message": "Aucune réservation trouvée."})
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        return response, 404
