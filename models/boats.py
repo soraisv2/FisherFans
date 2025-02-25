@@ -9,13 +9,13 @@ db_instance = os.getenv("DB_INSTANCE")
 if not db_instance:
     raise ValueError("DB_INSTANCE is not configured in the .env file")
 
-def add_boat(name, type, capacity, location, owner_id):
+def add_boat(name, type, capacity, location, owner_id, longitude, latitude):
     with sqlite3.connect(db_instance) as conn:
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO boats (name, type, capacity, location, owner_id) 
-            VALUES (?, ?, ?, ?, ?)
-        """, (name, type, capacity, location, owner_id))
+            INSERT INTO boats (name, type, capacity, location, owner_id, longitude, latitude) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (name, type, capacity, location, owner_id, longitude, latitude))
         conn.commit()
         
         boat_id = cursor.lastrowid

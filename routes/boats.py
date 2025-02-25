@@ -32,18 +32,18 @@ def get_boats_route():
 def create_boat():
     data = request.get_json()
 
-    required_fields = ["name", "type", "capacity", "location", "owner_id"]
+    required_fields = ["name", "type", "capacity", "location", "owner_id", "longitude", "latitude"]
     if not all(field in data for field in required_fields):
         return jsonify({"code": 400, "message": "Missing required fields"}), 400
 
     boat = add_boat(
-        data["name"], data["type"], data["capacity"], data["location"], data["owner_id"]
+        data["name"], data["type"], data["capacity"], data["location"], data["owner_id"], data["longitude"], data["latitude"]
     )
 
     if not boat:
-        return jsonify({"code": 500, "message": "Failed to create boat"}), 500
+        return jsonify({"message": "Failed to create boat"}), 500
 
-    return jsonify(boat), 201
+    return jsonify({"message": "Boat created successfully"}), 201
 
 
 @boats.route("/boats/<int:boat_id>", methods=["GET"])

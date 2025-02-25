@@ -23,6 +23,8 @@ def create_tables():
                     type INTEGER NOT NULL,
                     capacity TEXT NOT NULL,
                     location TEXT NOT NULL,
-                    owner_id TEXT NOT NULL)''')
+                    owner_id TEXT NOT NULL,
+                    longitude TEXT NOT NULL,
+                    latitude TEXT NOT NULL)''')
     conn.commit()
     conn.close()
