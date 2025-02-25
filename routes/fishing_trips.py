@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import fishing_trips  # Import the entire file, not the individual functions
+from models import fishing_trips
 
 fishing_trips_bp = Blueprint('fishing_trips', __name__)
 
