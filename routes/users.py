@@ -17,11 +17,11 @@ def user_actions():
     action = data["action"]
 
     if action == "register":
-        if not all(k in data for k in ["lastName", "firstName", "email", "password", "boat_license_number"]):
+        if not all(k in data for k in ["last_name", "first_name", "email", "password", "boat_license_number"]):
             return jsonify({"message": "Missing registration fields. 🛑"}), 400
 
         success, message = add_user(
-            data["lastName"], data["firstName"], data["email"], data["password"], data["boat_license_number"]
+            data["last_name"], data["first_name"], data["email"], data["password"], data["boat_license_number"]
         )
         status_code = 201 if success else 409  # 201 = Created, 409 = Conflict (email déjà utilisé)
         return jsonify({"message": message}), status_code

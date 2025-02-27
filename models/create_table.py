@@ -24,6 +24,8 @@ def create_tables():
                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT NOT NULL,
                     type TEXT NOT NULL,
+                    longitude REAL NOT NULL,
+                    latitude REAL NOT NULL,
                     capacity TEXT NOT NULL,
                     location TEXT NOT NULL,
                     owner_id INTEGER NOT NULL,
