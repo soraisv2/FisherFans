@@ -3,3 +3,4 @@ venv/
 instance/database.db
 __pycache__/
 .gitignore
+instance/database.db
