@@ -49,60 +49,67 @@ def user_actions():
 
 
 
+@users.route('/v1/users/<int:user_id>', methods=['GET'])
+@token_required
+def get_user_by_id(user_id):
+    user = get_user(user_id)
+    if user:
+        user_dict = {
+            "id": user[0],
+            "nom": user[1],
+            "prenom": user[2],
+            "email": user[3],
+            "mot_de_passe": user[4]
+        }
+        return jsonify(user_dict), 200
+    else:
+        return jsonify({"message": "Error while retrieving user. 🛑"}), 404
+
 @users.route('/v1/users', methods=['GET'])
 @token_required
-def get_users_or_user():
-    user_id = request.args.get("user_id")  # Récupération de l'ID via les paramètres d'URL
-
-    if user_id:  # Si un ID est fourni, on récupère un seul utilisateur
-        user = get_user(user_id)
-        if user:
-            user_dict = {
+def get_all_users():
+    success, users = get_users()
+    if success:
+        user_list = [
+            {
                 "id": user[0],
                 "nom": user[1],
                 "prenom": user[2],
                 "email": user[3],
                 "mot_de_passe": user[4]
             }
-            return jsonify(user_dict), 200
-        else:
-            return jsonify({"message": "Error while retrieving user. 🛑"}), 404
-    else:  # Sinon, on récupère tous les utilisateurs
-        success, users = get_users()
-        if success:
-            user_list = [
-                {
-                    "id": user[0],
-                    "nom": user[1],
-                    "prenom": user[2],
-                    "email": user[3],
-                    "mot_de_passe": user[4]
-                }
-                for user in users
-            ]
-            return jsonify(user_list)
-        else:
-            return jsonify({"message": "Error while retrieving users. 🛑"}), 404
-
-
-@users.route('/v1/users', methods=['PUT'])
-@token_required
-def modify_user_route():
-    data = request.get_json()
-    user = get_user(data["user_id"])
-    if user:
-        modify_user(data['lastName'], data['firstName'], data['email'], data['boat_lisense_number'])
-        return jsonify({"message": f"Utilisateur avec l'id {data['user_id']} modifié avec succès !"})
+            for user in users
+        ]
+        return jsonify(user_list)
     else:
-        return jsonify({"message": "Utilisateur non trouvé"}), 404
+        return jsonify({"message": "Error while retrieving users. 🛑"}), 404
 
-@users.route('/v1/users', methods=['DELETE'])
+
+
+@users.route('/v1/users/<int:user_id>', methods=['PUT'])
 @token_required
-def delete_user_route():
+def modify_user_route(user_id):
     data = request.get_json()
-    user = get_user(data["user_id"])
+
+    # Vérifier que tous les champs requis sont présents et non vides
+    required_fields = ["lastName", "firstName", "email", "boat_license_number"]
+    if not all(field in data and data[field] for field in required_fields):
+        return jsonify({"message": "Tous les champs doivent être remplis. 🛑"}), 400  # 400 = Bad Request
+
+    user = get_user(user_id)
     if user:
-        delete_user(data["user_id"])
+        modify_user(user_id, data["lastName"], data["firstName"], data["email"], data["boat_license_number"])
+        return jsonify({"message": f"Utilisateur avec l'id {user_id} modifié avec succès ! ✅"}), 200
+    else:
+        return jsonify({"message": "Utilisateur non trouvé. 🛑"}), 404  # 404 = Not Found
+
+
+@users.route('/v1/users/<int:user_id>', methods=['DELETE'])
+@token_required
+def delete_user_route(user_id):
+    user = get_user(user_id)
+    if user:
+        delete_user(user_id)
         return jsonify({"message": f"Utilisateur supprimé avec succès !"})
     else:
         return jsonify({"message": "Utilisateur non trouvé"}), 404
