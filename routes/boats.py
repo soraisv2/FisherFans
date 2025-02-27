@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, Response  
 from models.boats import get_boats, add_boat, delete_boat, modify_boat, get_boat
+from models.users import get_user
 import json
 # JWT secure import
 import jwt, datetime
@@ -39,6 +40,13 @@ def create_boat():
     boat = add_boat(
         data["name"], data["type"], data["capacity"], data["location"], data["owner_id"], data["longitude"], data["latitude"]
     )
+
+    user = get_user(data["owner_id"])
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    if not user[5]:
+        return jsonify({"message": "Cannot add a boat because the user does not have a boat license number."}), 400
 
     if not boat:
         return jsonify({"message": "Failed to create boat"}), 500
