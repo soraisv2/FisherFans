@@ -34,7 +34,7 @@ def get_boats(filters=None):
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         query = """
-            SELECT id, name, type, capacity, location, owner_id 
+            SELECT id, name, type, capacity, location, owner_id, longitude, latitude
             FROM boats
         """
         params = []
@@ -63,7 +63,9 @@ def get_boats(filters=None):
                 "type": boat["type"],
                 "capacity": boat["capacity"],
                 "location": boat["location"],
-                "owner_id": boat["owner_id"]
+                "owner_id": boat["owner_id"],
+                "longitude": boat["longitude"],
+                "latitude": boat["latitude"]
             }
             for boat in boats
         ]
@@ -103,15 +105,16 @@ def get_boats_by_zone(top_left, bottom_right):
 
         # Requête SQL pour récupérer les bateaux dans la zone spécifiée
         query = """
-            SELECT id, name, type, capacity, location, owner_id 
+            SELECT id, name, type, capacity, location, owner_id, longitude, latitude
             FROM boats
             WHERE latitude BETWEEN ? AND ?
             AND longitude BETWEEN ? AND ?
         """
         cursor.execute(query, (
-            bottom_right["latitude"], top_left["latitude"],
-            top_left["longitude"], bottom_right["longitude"]
+            bottom_right["latitude"], top_left["latitude"],  # De haut en bas (correct)
+            bottom_right["longitude"], top_left["longitude"]  # De gauche à droite (corrigé)
         ))
+
 
         boats = cursor.fetchall()
         return [
@@ -121,7 +124,9 @@ def get_boats_by_zone(top_left, bottom_right):
                 "type": boat["type"],
                 "capacity": boat["capacity"],
                 "location": boat["location"],
-                "owner_id": boat["owner_id"]
+                "owner_id": boat["owner_id"],
+                "longitude": boat["longitude"],
+                "latitude": boat["latitude"]
             }
             for boat in boats
         ]

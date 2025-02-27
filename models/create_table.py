@@ -37,8 +37,6 @@ def create_tables():
                     latitude REAL NOT NULL,
                     capacity TEXT NOT NULL,
                     location TEXT NOT NULL,
-                    longitude REAL NOT NULL,  -- Nouveau champ pour la longitude
-                    latitude REAL NOT NULL,   -- Nouveau champ pour la latitude
                     owner_id INTEGER NOT NULL,
                     FOREIGN KEY (owner_id) REFERENCES users(id))''')
 

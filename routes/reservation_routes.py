@@ -8,8 +8,6 @@ reservation = Blueprint('reservation', __name__)
 @reservation.route("/v1/reservations", methods=['POST'])
 @token_required
 def add_reservation_route():
-    if 'user_id' not in session:
-        return jsonify({"message": "You need to be connected to add a reservation"}), 401
     data = request.get_json()
     add_reservation(data['user_id'], data['boat_id'], data['fishing_trip_id'], data['date_reservation'], data['statut'], data['nbplace'], data['start_datetime'], data['end_datetime'], data['price'])
     return jsonify({"message": "reservation added succefuly !"}), 200
