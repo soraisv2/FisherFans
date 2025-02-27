@@ -5,7 +5,7 @@ from app.utils import token_required
 
 reservation = Blueprint('reservation', __name__)
 
-@reservation.route('/reservation', methods=['POST'])
+@reservation.route("/v1/reservations", methods=['POST'])
 @token_required
 def add_reservation_route():
     if 'user_id' not in session:
@@ -14,7 +14,7 @@ def add_reservation_route():
     add_reservation(data['user_id'], data['boat_id'], data['fishing_trip_id'], data['date_reservation'], data['statut'], data['nbplace'], data['start_datetime'], data['end_datetime'], data['price'])
     return jsonify({"message": "reservation added succefuly !"}), 200
 
-@reservation.route('/reservation', methods=['GET'])
+@reservation.route("/v1/reservations", methods=['GET'])
 @token_required
 def get_reservation_route():
     data = request.get_json()
@@ -35,7 +35,7 @@ def get_reservation_route():
             "reservations": []
         }), 404
 
-@reservation.route('/reservation/<int:reservation_id>', methods=['DELETE'])
+@reservation.route("/v1/reservations/<int:reservation_id>", methods=['DELETE'])
 @token_required
 def delete_reservation_route(reservation_id):
     delete_reservation(reservation_id)
@@ -44,7 +44,7 @@ def delete_reservation_route(reservation_id):
     return response, 200
 
 
-@reservation.route('/reservation/<int:reservation_id>', methods=['PUT'])
+@reservation.route("/v1/reservations/<int:reservation_id>", methods=['PUT'])
 @token_required
 def modify_reservation_route(reservation_id):
     data = request.get_json()
