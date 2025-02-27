@@ -2235,8 +2235,4 @@ components:
       scheme: bearer
       bearerFormat: JWT
 security:
-<<<<<<< HEAD
 - bearerAuth: []
-=======
-  - bearerAuth: []
->>>>>>> fb85a6995da9fae55e7a52617e9deedf058d6dda
