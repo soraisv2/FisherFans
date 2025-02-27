@@ -3,8 +3,8 @@ from app.database import get_db
 from models.users import get_users, add_user, get_user, delete_user, modify_user, login_user
 from models.boats import get_user_boats
 from models.fishing_logs import get_user_fishing_log
-from models.fishing_trips import get_user_trips
-from models.reservation import get_user_reservations
+# from models.fishing_trips import get_user_trips
+# from models.reservation import get_user_reservations
 # JWT secure import
 import jwt, datetime
 from app.utils import token_required
@@ -66,28 +66,38 @@ def user_actions():
 def get_user_by_id(user_id):
     # Récupérer les données de l'utilisateur
     user = get_user(user_id)
+    
     if user:
         # Récupérer les listes associées
-        boats = get_user_boats(user_id)  # Récupère la liste des bateaux
-        fishing_log = get_user_fishing_log(user_id)  # Récupère le journal de pêche
-        trips = get_user_trips(user_id)  # Récupère les voyages de pêche
-        reservations = get_user_reservations(user_id)  # Récupère les réservations
+        boats = get_user_boats(user_id)  # Récupère la liste des bateaux concernant l'utilisateur
+        # fishing_log = get_user_fishing_log(user_id)  # Récupère le journal de pêche
+        # trips = get_user_trips(user_id)  # Récupère les voyages de pêche
+        # reservations = get_user_reservations(user_id)  # Récupère les réservations
 
         # Construire le dictionnaire de l'utilisateur
         user_dict = {
             "id": user[0],
-            "nom": user[1],
-            "prenom": user[2],
+            "last_name": user[1],
+            "first_name": user[2],
             "email": user[3],
-            "mot_de_passe": user[4],
+            "date_of_birth": user[4],
+            "phone": user[5],
+            "address": user[6],
+            "postal_code": user[7],
+            "city": user[8],
+            "spoken_languages": user[9].split(",") if user[9] else [],  # Convertir en liste
+            "avatar_url": user[10],
+            "boat_license_number": user[11],
+            "insurance_number": user[12],
             "boats": boats,  # Ajouter les bateaux
-            "fishing_log": fishing_log,  # Ajouter le journal de pêche
-            "trips": trips,  # Ajouter les voyages
-            "reservations": reservations  # Ajouter les réservations
+            # "fishing_log": fishing_log,  # Ajouter le journal de pêche
+            # "trips": trips,  # Ajouter les voyages
+            # "reservations": reservations  # Ajouter les réservations
         }
         return jsonify(user_dict), 200
     else:
         return jsonify({"message": "Error while retrieving user. 🛑"}), 404
+
 
 
 @users.route('/v1/users', methods=['GET'])

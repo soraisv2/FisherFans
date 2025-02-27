@@ -47,6 +47,9 @@ def get_boats(filters=None):
             if "capacity" in filters:
                 conditions.append("capacity >= ?")
                 params.append(filters["capacity"])
+            if "owner_id" in filters:
+                conditions.append("owner_id = ?")
+                params.append(filters["owner_id"])
             if conditions:
                 query += " WHERE " + " AND ".join(conditions)
 
@@ -64,6 +67,11 @@ def get_boats(filters=None):
             }
             for boat in boats
         ]
+
+def get_user_boats(user_id):
+    filters = {"owner_id": user_id}
+    boats = get_boats(filters)
+    return boats
 
 def get_boat(boat_id):
     with sqlite3.connect(db_instance) as conn:
