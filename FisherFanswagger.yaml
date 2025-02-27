@@ -1,0 +1,2238 @@
+openapi: 3.1.0
+info:
+  title: Fisher Fans API - OpenAPI 3.1
+  description: >-
+    Fisher Fans is a fictional mobile application that allows sea fishing or
+    underwater fishing enthusiasts to share boat spaces, book fishing trips,
+    rent boats, and manage their fishing log.
+
+
+    This API allows managing users, boats, fishing trips, reservations, and
+    fishing logs. It is designed to be private, secured by user authentication.
+
+
+    You can contribute to improving this API by suggesting modifications or
+    additions. This will help enrich the features and ensure a better user
+    experience.
+
+
+    **Useful links:**
+
+    - [Fisher Fans Repository](https://github.com/soraisv2/FisherFan)
+  termsOfService: http://fisherfans.io/terms/
+  contact:
+    name: Fisher Fans Team
+    email: support@fisherfans.io
+    url: http://ynov-fisherfans.fr/contact
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0-oas3.1
+externalDocs:
+  description: Learn more about Fisher Fans
+  url: http://ynov-fisherfans.fr/docs
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local development server
+tags:
+  - name: Users
+    description: Managing application users
+  - name: Boats
+    description: Managing available boats
+  - name: Fishing Trips
+    description: Managing fishing trips
+  - name: Reservations
+    description: Managing fishing trip reservations
+  - name: Fishing Logs
+    description: Managing users' fishing logs
+paths:
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    last_name:
+                      type: string
+                      examples: 
+                        - Dupont
+                    first_name:
+                      type: string
+                      examples:
+                        - Jean
+                    email:
+                      type: string
+                      format: email
+                      examples:
+                        - jean.dupont@example.com
+                - type: object
+                  properties:
+                    password:
+                      type: string
+                      format: password
+                      examples:
+                        - SecurePassword123
+                  required:
+                    - password
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  last_name:
+                    type: string
+                    examples:
+                      - Dupont
+                  first_name:
+                    type: string
+                    examples:
+                      - Jean
+                  email:
+                    type: string
+                    format: email
+                    examples:
+                      - jean.dupont@example.com
+                  boat_license_number:
+                    type: string
+                    examples:
+                      - ABC1234567
+                required:
+                  - id
+                  - last_name
+                  - first_name
+                  - email
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    get:
+      tags:
+        - Users
+      summary: Retrieve a list of users with filters
+      parameters:
+        - in: query
+          name: last_name
+          schema:
+            type: string
+          description: Filter by last name
+        - in: query
+          name: email
+          schema:
+            type: string
+          description: Filter by email
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      examples:
+                        - 1
+                    last_name:
+                      type: string
+                      examples:
+                        - Dupont
+                    first_name:
+                      type: string
+                      examples:
+                        - Jean
+                    email:
+                      type: string
+                      format: email
+                      examples:
+                        - jean.dupont@example.com
+                    boat_license_number:
+                      type: string
+                      examples:
+                        - ABC1234567
+                  required:
+                    - id
+                    - last_name
+                    - first_name
+                    - email
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Retrieve details of a specific user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: User ID
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  last_name:
+                    type: string
+                    examples:
+                      - Dupont
+                  first_name:
+                    type: string
+                    examples:
+                      - Jean
+                  email:
+                    type: string
+                    format: email
+                    examples:
+                      - jean.dupont@example.com
+                  boat_license_number:
+                    type: string
+                    examples:
+                      - ABC1234567
+                required:
+                  - id
+                  - last_name
+                  - first_name
+                  - email
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    put:
+      tags:
+        - Users
+      summary: Modify a user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: User ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                last_name:
+                  type: string
+                  examples:
+                    - Dupont
+                first_name:
+                  type: string
+                  examples:
+                    - Jean
+                email:
+                  type: string
+                  format: email
+                  examples:
+                    - jean.dupont@example.com
+                boat_license_number:
+                  type: string
+                  examples:
+                    - ABC1234567
+      responses:
+        '200':
+          description: User modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  last_name:
+                    type: string
+                    examples:
+                      - Dupont
+                  first_name:
+                    type: string
+                    examples:
+                      - Jean
+                  email:
+                    type: string
+                    format: email
+                    examples:
+                      - jean.dupont@example.com
+                  boat_license_number:
+                    type: string
+                    examples:
+                      - ABC1234567
+                required:
+                  - id
+                  - last_name
+                  - first_name
+                  - email
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    delete:
+      tags:
+        - Users
+      summary: Delete a user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: User ID
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  last_name:
+                    type: string
+                    examples:
+                      - Dupont
+                  first_name:
+                    type: string
+                    examples:
+                      - Jean
+                  email:
+                    type: string
+                    format: email
+                    examples:
+                      - jean.dupont@example.com
+                  boat_license_number:
+                    type: string
+                    examples:
+                      - ABC1234567
+                required:
+                  - id
+                  - last_name
+                  - first_name
+                  - email
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+  /boats:
+    post:
+      tags:
+        - Boats
+      summary: Create a new boat
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                      examples:
+                        - Sea Explorer
+                    type:
+                      type: string
+                      examples:
+                        - Yacht
+                    capacity:
+                      type: integer
+                      examples:
+                        - 10
+                    location:
+                      type: string
+                      examples:
+                        - Marseille
+      responses:
+        '201':
+          description: Boat created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  name:
+                    type: string
+                    examples:
+                      - Sea Explorer
+                  type:
+                    type: string
+                    examples:
+                      - Yacht
+                  capacity:
+                    type: integer
+                    examples:
+                      - 10
+                  location:
+                    type: string
+                    examples:
+                      - Marseille
+                  owner_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - name
+                  - type
+                  - capacity
+                  - location
+                  - owner_id
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '403':
+          description: Forbidden - User without boat license
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    get:
+      tags:
+        - Boats
+      summary: Retrieve a list of boats with filters
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: string
+          description: Filter by boat type
+        - in: query
+          name: capacity
+          schema:
+            type: integer
+          description: Filter by capacity
+      responses:
+        '200':
+          description: List of boats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      examples:
+                        - 1
+                    name:
+                      type: string
+                      examples:
+                        - Sea Explorer
+                    type:
+                      type: string
+                      examples:
+                        - Yacht
+                    capacity:
+                      type: integer
+                      examples:
+                        - 10
+                    location:
+                      type: string
+                      examples:
+                        - Marseille
+                    owner_id:
+                      type: integer
+                      examples:
+                        - 1
+                  required:
+                    - id
+                    - name
+                    - type
+                    - capacity
+                    - location
+                    - owner_id
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+  /boats/{id}:
+    get:
+      tags:
+        - Boats
+      summary: Retrieve details of a specific boat
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Boat ID
+      responses:
+        '200':
+          description: Boat details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  name:
+                    type: string
+                    examples:
+                      - Sea Explorer
+                  type:
+                    type: string
+                    examples:
+                      - Yacht
+                  capacity:
+                    type: integer
+                    examples:
+                      - 10
+                  location:
+                    type: string
+                    examples:
+                      - Marseille
+                  owner_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - name
+                  - type
+                  - capacity
+                  - location
+                  - owner_id
+        '404':
+          description: Boat not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    put:
+      tags:
+        - Boats
+      summary: Modify a boat
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Boat ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  examples:
+                    - Sea Explorer Updated
+                type:
+                  type: string
+                  examples:
+                    - Kayak
+                capacity:
+                  type: integer
+                  examples:
+                    - 8
+                location:
+                  type: string
+                  examples:
+                    - Nice
+      responses:
+        '200':
+          description: Boat modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  name:
+                    type: string
+                    examples:
+                      - Sea Explorer
+                  type:
+                    type: string
+                    examples:
+                      - Yacht
+                  capacity:
+                    type: integer
+                    examples:
+                      - 10
+                  location:
+                    type: string
+                    examples:
+                      - Marseille
+                  owner_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - name
+                  - type
+                  - capacity
+                  - location
+                  - owner_id
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '403':
+          description: Forbidden - Not authorized to modify this boat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '404':
+          description: Boat not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    delete:
+      tags:
+        - Boats
+      summary: Delete a boat
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Boat ID
+      responses:
+        '200':
+          description: Boat deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  name:
+                    type: string
+                    examples:
+                      - Sea Explorer
+                  type:
+                    type: string
+                    examples:
+                      - Yacht
+                  capacity:
+                    type: integer
+                    examples:
+                      - 10
+                  location:
+                    type: string
+                    examples:
+                      - Marseille
+                  owner_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - name
+                  - type
+                  - capacity
+                  - location
+                  - owner_id
+        '403':
+          description: Forbidden - Not authorized to delete this boat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '404':
+          description: Boat not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+  /fishing_trips:
+    post:
+      tags:
+        - Fishing Trips
+      summary: Create a new fishing trip
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    date:
+                      type: string
+                      format: date
+                      examples:
+                        - '2024-05-01T00:00:00.000Z'
+                    location:
+                      type: string
+                      examples:
+                        - Gulf of Lion
+                    fishing_type:
+                      type: string
+                      examples:
+                        - Underwater fishing
+                - type: object
+                  properties:
+                    boat_id:
+                      type: integer
+                      examples:
+                        - 1
+                  required:
+                    - boat_id
+      responses:
+        '201':
+          description: Fishing trip created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  date:
+                    type: string
+                    format: date
+                    examples:
+                      - '2024-05-01T00:00:00.000Z'
+                  location:
+                    type: string
+                    examples:
+                      - Gulf of Lion
+                  fishing_type:
+                    type: string
+                    examples:
+                      - Underwater fishing
+                  boat_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - date
+                  - location
+                  - fishing_type
+                  - boat_id
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '403':
+          description: Forbidden - User without a boat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    get:
+      tags:
+        - Fishing Trips
+      summary: Retrieve a list of fishing trips with filters
+      parameters:
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+          description: Filter by date
+        - in: query
+          name: fishing_type
+          schema:
+            type: string
+          description: Filter by fishing type
+      responses:
+        '200':
+          description: List of fishing trips
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      examples:
+                        - 1
+                    date:
+                      type: string
+                      format: date
+                      examples:
+                        - '2024-05-01T00:00:00.000Z'
+                    location:
+                      type: string
+                      examples:
+                        - Gulf of Lion
+                    fishing_type:
+                      type: string
+                      examples:
+                        - Underwater fishing
+                    boat_id:
+                      type: integer
+                      examples:
+                        - 1
+                  required:
+                    - id
+                    - date
+                    - location
+                    - fishing_type
+                    - boat_id
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+  /fishing_trips/{id}:
+    get:
+      tags:
+        - Fishing Trips
+      summary: Retrieve details of a specific fishing trip
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Fishing trip ID
+      responses:
+        '200':
+          description: Fishing trip details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  date:
+                    type: string
+                    format: date
+                    examples:
+                      - '2024-05-01T00:00:00.000Z'
+                  location:
+                    type: string
+                    examples:
+                      - Gulf of Lion
+                  fishing_type:
+                    type: string
+                    examples:
+                      - Underwater fishing
+                  boat_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - date
+                  - location
+                  - fishing_type
+                  - boat_id
+        '404':
+          description: Fishing trip not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    put:
+      tags:
+        - Fishing Trips
+      summary: Modify a fishing trip
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Fishing trip ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  format: date
+                  examples:
+                    - '2024-06-01T00:00:00.000Z'
+                location:
+                  type: string
+                  examples:
+                    - Blue Coast
+                fishing_type:
+                  type: string
+                  examples:
+                    - Deep-sea fishing
+      responses:
+        '200':
+          description: Fishing trip modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  date:
+                    type: string
+                    format: date
+                    examples:
+                      - '2024-05-01T00:00:00.000Z'
+                  location:
+                    type: string
+                    examples:
+                      - Gulf of Lion
+                  fishing_type:
+                    type: string
+                    examples:
+                      - Underwater fishing
+                  boat_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - date
+                  - location
+                  - fishing_type
+                  - boat_id
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '403':
+          description: Forbidden - Not authorized to modify this fishing trip
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '404':
+          description: Fishing trip not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+  /reservations:
+    post:
+      tags:
+        - Reservations
+      summary: Create a new reservation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    user_id:
+                      type: integer
+                      examples:
+                        - 1
+                    fishing_trip_id:
+                      type: integer
+                      examples:
+                        - 1
+      responses:
+        '201':
+          description: Reservation created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  user_id:
+                    type: integer
+                    examples:
+                      - 1
+                  fishing_trip_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - user_id
+                  - fishing_trip_id
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+  /reservations/{id}:
+    get:
+      tags:
+        - Reservations
+      summary: Retrieve details of a specific reservation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Reservation ID
+      responses:
+        '200':
+          description: Reservation details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  user_id:
+                    type: integer
+                    examples:
+                      - 1
+                  fishing_trip_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - user_id
+                  - fishing_trip_id
+        '404':
+          description: Reservation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    put:
+      tags:
+        - Reservations
+      summary: Modify a reservation
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Reservation ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  examples:
+                    - 2
+                fishing_trip_id:
+                  type: integer
+                  examples:
+                    - 2
+      responses:
+        '200':
+          description: Reservation modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  user_id:
+                    type: integer
+                    examples:
+                      - 1
+                  fishing_trip_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - user_id
+                  - fishing_trip_id
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '404':
+          description: Reservation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    delete:
+      tags:
+        - Reservations
+      summary: Delete a reservation
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Reservation ID
+      responses:
+        '200':
+          description: Reservation deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  user_id:
+                    type: integer
+                    examples:
+                      - 1
+                  fishing_trip_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - user_id
+                  - fishing_trip_id
+        '404':
+          description: Reservation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+  /fishing_logs:
+    post:
+      tags:
+        - Fishing Logs
+      summary: Create a new fishing log
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    title:
+                      type: string
+                      examples:
+                        - April Log
+                    description:
+                      type: string
+                      examples:
+                        - My fishing trips in April
+                - type: object
+                  properties:
+                    user_id:
+                      type: integer
+                      examples:
+                        - 1
+                  required:
+                    - user_id
+      responses:
+        '201':
+          description: Fishing log created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  title:
+                    type: string
+                    examples:
+                      - April Log
+                  description:
+                    type: string
+                    examples:
+                      - My fishing trips in April
+                  user_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - title
+                  - description
+                  - user_id
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    get:
+      tags:
+        - Fishing Logs
+      summary: Retrieve a list of fishing logs with filters
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+          description: Filter by user ID
+        - in: query
+          name: title
+          schema:
+            type: string
+          description: Filter by fishing log title
+      responses:
+        '200':
+          description: List of fishing logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      examples:
+                        - 1
+                    title:
+                      type: string
+                      examples:
+                        - April Log
+                    description:
+                      type: string
+                      examples:
+                        - My fishing trips in April
+                    user_id:
+                      type: integer
+                      examples:
+                        - 1
+                  required:
+                    - id
+                    - title
+                    - description
+                    - user_id
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+  /fishing_logs/{id}:
+    get:
+      tags:
+        - Fishing Logs
+      summary: Retrieve details of a specific fishing log
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Fishing log ID
+      responses:
+        '200':
+          description: Fishing log details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  title:
+                    type: string
+                    examples:
+                      - April Log
+                  description:
+                    type: string
+                    examples:
+                      - My fishing trips in April
+                  user_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - title
+                  - description
+                  - user_id
+        '404':
+          description: Fishing log not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    put:
+      tags:
+        - Fishing Logs
+      summary: Modify a fishing log
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Fishing log ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  examples:
+                    - May Log
+                description:
+                  type: string
+                  examples:
+                    - My fishing trips in May
+      responses:
+        '200':
+          description: Fishing log modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  title:
+                    type: string
+                    examples:
+                      - April Log
+                  description:
+                    type: string
+                    examples:
+                      - My fishing trips in April
+                  user_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - title
+                  - description
+                  - user_id
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '403':
+          description: Forbidden - Not authorized to modify this fishing log
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '404':
+          description: Fishing log not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+    delete:
+      tags:
+        - Fishing Logs
+      summary: Delete pages from the fishing log
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Fishing log ID
+      responses:
+        '200':
+          description: Fishing log pages deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                      - 1
+                  title:
+                    type: string
+                    examples:
+                      - April Log
+                  description:
+                    type: string
+                    examples:
+                      - My fishing trips in April
+                  user_id:
+                    type: integer
+                    examples:
+                      - 1
+                required:
+                  - id
+                  - title
+                  - description
+                  - user_id
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '403':
+          description: Forbidden - Not authorized to delete pages from this fishing log
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+        '404':
+          description: Fishing log not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    examples:
+                      - 400
+                  message:
+                    type: string
+                    examples:
+                      - Invalid request
+components:
+  schemas:
+    UserBase:
+      type: object
+      properties:
+        last_name:
+          type: string
+          examples:
+            - Dupont
+        first_name:
+          type: string
+          examples:
+            - Jean
+        email:
+          type: string
+          format: email
+          examples:
+            - "jean.dupont@example.com"
+    UserCreate:
+      allOf:
+        - type: object
+          properties:
+            last_name:
+              type: string
+              examples:
+                - Dupont
+            first_name:
+              type: string
+              examples:
+                - Jean
+            email:
+              type: string
+              format: email
+              examples:
+                - jean.dupont@example.com
+        - type: object
+          properties:
+            password:
+              type: string
+              format: password
+              examples:
+                - SecurePassword123
+          required:
+            - password
+    UserRead:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples:
+            - 1
+        last_name:
+          type: string
+          examples:
+            - Dupont
+        first_name:
+          type: string
+          examples:
+            - Jean
+        email:
+          type: string
+          format: email
+          examples:
+            - jean.dupont@example.com
+        boat_license_number:
+          type: string
+          examples:
+            - ABC1234567
+      required:
+        - id
+        - last_name
+        - first_name
+        - email
+    UserUpdate:
+      type: object
+      properties:
+        last_name:
+          type: string
+          examples:
+            - Dupont
+        first_name:
+          type: string
+          examples:
+            - Jean
+        email:
+          type: string
+          format: email
+          examples:
+            - jean.dupont@example.com
+        boat_license_number:
+          type: string
+          examples:
+            - ABC1234567
+    BoatBase:
+      type: object
+      properties:
+        name:
+          type: string
+          examples:
+            - Sea Explorer
+        type:
+          type: string
+          examples:
+            - Yacht
+        capacity:
+          type: integer
+          examples:
+            - 10
+        location:
+          type: string
+          examples:
+            - Marseille
+    BoatCreate:
+      allOf:
+        - type: object
+          properties:
+            name:
+              type: string
+              examples:
+                - Sea Explorer
+            type:
+              type: string
+              examples:
+                - Yacht
+            capacity:
+              type: integer
+              examples:
+                - 10
+            location:
+              type: string
+              examples:
+                - Marseille
+    BoatRead:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples:
+            - 1
+        name:
+          type: string
+          examples:
+            - Sea Explorer
+        type:
+          type: string
+          examples:
+            - Yacht
+        capacity:
+          type: integer
+          examples:
+            - 10
+        location:
+          type: string
+          examples:
+            - Marseille
+        owner_id:
+          type: integer
+          examples:
+            - 1
+      required:
+        - id
+        - name
+        - type
+        - capacity
+        - location
+        - owner_id
+    BoatUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          examples:
+            - Sea Explorer Updated
+        type:
+          type: string
+          examples:
+            - Kayak
+        capacity:
+          type: integer
+          examples:
+            - 8
+        location:
+          type: string
+          examples:
+            - Nice
+    FishingTripBase:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          examples:
+            - '2024-05-01T00:00:00.000Z'
+        location:
+          type: string
+          examples:
+            - Gulf of Lion
+        fishing_type:
+          type: string
+          examples:
+            - Underwater fishing
+    FishingTripCreate:
+      allOf:
+        - type: object
+          properties:
+            date:
+              type: string
+              format: date
+              examples:
+                - '2024-05-01T00:00:00.000Z'
+            location:
+              type: string
+              examples:
+                - Gulf of Lion
+            fishing_type:
+              type: string
+              examples:
+                - Underwater fishing
+        - type: object
+          properties:
+            boat_id:
+              type: integer
+              examples:
+                - 1
+          required:
+            - boat_id
+    FishingTripRead:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples:
+            - 1
+        date:
+          type: string
+          format: date
+          examples:
+            - '2024-05-01T00:00:00.000Z'
+        location:
+          type: string
+          examples:
+            - Gulf of Lion
+        fishing_type:
+          type: string
+          examples:
+            - Underwater fishing
+        boat_id:
+          type: integer
+          examples:
+            - 1
+      required:
+        - id
+        - date
+        - location
+        - fishing_type
+        - boat_id
+    FishingTripUpdate:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          examples:
+            - '2024-06-01T00:00:00.000Z'
+        location:
+          type: string
+          examples:
+            - Blue Coast
+        fishing_type:
+          type: string
+          examples:
+            - Deep-sea fishing
+    ReservationBase:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          examples:
+            - 1
+        fishing_trip_id:
+          type: integer
+          examples:
+            - 1
+    ReservationCreate:
+      allOf:
+        - type: object
+          properties:
+            user_id:
+              type: integer
+              examples:
+                - 1
+            fishing_trip_id:
+              type: integer
+              examples:
+                - 1
+    ReservationRead:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples:
+            - 1
+        user_id:
+          type: integer
+          examples:
+            - 1
+        fishing_trip_id:
+          type: integer
+          examples:
+            - 1
+      required:
+        - id
+        - user_id
+        - fishing_trip_id
+    ReservationUpdate:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          examples:
+            - 2
+        fishing_trip_id:
+          type: integer
+          examples:
+            - 2
+    FishingLogBase:
+      type: object
+      properties:
+        title:
+          type: string
+          examples:
+            - April Log
+        description:
+          type: string
+          examples:
+            - My fishing trips in April
+    FishingLogCreate:
+      allOf:
+        - type: object
+          properties:
+            title:
+              type: string
+              examples:
+                - April Log
+            description:
+              type: string
+              examples:
+                - My fishing trips in April
+        - type: object
+          properties:
+            user_id:
+              type: integer
+              examples:
+                - 1
+          required:
+            - user_id
+    FishingLogRead:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples:
+            - 1
+        title:
+          type: string
+          examples:
+            - April Log
+        description:
+          type: string
+          examples:
+            - My fishing trips in April
+        user_id:
+          type: integer
+          examples:
+            - 1
+      required:
+        - id
+        - title
+        - description
+        - user_id
+    FishingLogUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          examples:
+            - May Log
+        description:
+          type: string
+          examples:
+            - My fishing trips in May
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          examples:
+            - 400
+        message:
+          type: string
+          examples:
+            - Invalid request
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+- bearerAuth: []
