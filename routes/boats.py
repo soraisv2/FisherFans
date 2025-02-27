@@ -7,7 +7,7 @@ from app.utils import token_required
 
 boats = Blueprint('boats', __name__)
 
-@boats.route("/boats", methods=["GET"])
+@boats.route("/v1/boats", methods=["GET"])
 @token_required
 def get_boats_route():
     filters = {}
@@ -27,7 +27,7 @@ def get_boats_route():
     return response, 200
 
 
-@boats.route("/boats", methods=["POST"])
+@boats.route("/v1/boats", methods=["POST"])
 @token_required
 def create_boat():
     data = request.get_json()
@@ -46,7 +46,7 @@ def create_boat():
     return jsonify({"message": "Boat created successfully"}), 201
 
 
-@boats.route("/boats/<int:boat_id>", methods=["GET"])
+@boats.route("/v1/boats/<int:boat_id>", methods=["GET"])
 @token_required
 def retrieve_boat(boat_id):
     boat = get_boat(boat_id)
@@ -54,7 +54,7 @@ def retrieve_boat(boat_id):
         return jsonify(boat)
     return jsonify({"code": 404, "message": "Boat not found"}), 404
 
-@boats.route("/boats/<int:boat_id>", methods=["PUT"])
+@boats.route("/v1/boats/<int:boat_id>", methods=["PUT"])
 @token_required
 def update_boat(boat_id):
     data = request.get_json()
@@ -70,7 +70,7 @@ def update_boat(boat_id):
     modify_boat(boat_id, data["name"], data["type"], data["capacity"], data["location"])
     return jsonify({"message": "Boat updated successfully"}), 200
 
-@boats.route("/boats/<int:boat_id>", methods=["DELETE"])
+@boats.route("/v1/boats/<int:boat_id>", methods=["DELETE"])
 @token_required
 def remove_boat(boat_id):
     boat = get_boat(boat_id)
