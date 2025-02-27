@@ -47,6 +47,9 @@ def get_boats(filters=None):
             if "capacity" in filters:
                 conditions.append("capacity >= ?")
                 params.append(filters["capacity"])
+            if "owner_id" in filters:
+                conditions.append("owner_id = ?")
+                params.append(filters["owner_id"])
             if conditions:
                 query += " WHERE " + " AND ".join(conditions)
 
@@ -64,6 +67,11 @@ def get_boats(filters=None):
             }
             for boat in boats
         ]
+
+def get_user_boats(user_id):
+    filters = {"owner_id": user_id}
+    boats = get_boats(filters)
+    return boats
 
 def get_boat(boat_id):
     with sqlite3.connect(db_instance) as conn:
@@ -87,3 +95,34 @@ def delete_boat(boat_id):
         cursor = conn.cursor()
         cursor.execute("DELETE FROM boats WHERE id = ?", (boat_id,))
         conn.commit()
+
+def get_boats_by_zone(top_left, bottom_right):
+    with sqlite3.connect(db_instance) as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        # Requête SQL pour récupérer les bateaux dans la zone spécifiée
+        query = """
+            SELECT id, name, type, capacity, location, owner_id 
+            FROM boats
+            WHERE latitude BETWEEN ? AND ?
+            AND longitude BETWEEN ? AND ?
+        """
+        cursor.execute(query, (
+            bottom_right["latitude"], top_left["latitude"],
+            top_left["longitude"], bottom_right["longitude"]
+        ))
+
+        boats = cursor.fetchall()
+        return [
+            {
+                "id": boat["id"],
+                "name": boat["name"],
+                "type": boat["type"],
+                "capacity": boat["capacity"],
+                "location": boat["location"],
+                "owner_id": boat["owner_id"]
+            }
+            for boat in boats
+        ]
+

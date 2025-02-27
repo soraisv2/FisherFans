@@ -12,13 +12,22 @@ def create_tables():
 
     # Création de la table 'users'
     cursor.execute('''CREATE TABLE IF NOT EXISTS users
-                   (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                (id INTEGER PRIMARY KEY AUTOINCREMENT,
                     lastName TEXT NOT NULL,
                     firstName TEXT NOT NULL,
                     email TEXT NOT NULL,
                     password TEXT NOT NULL,
-                    boat_license_number TEXT NOT NULL)''')
+                    boat_license_number TEXT NOT NULL,
+                    date_of_birth TEXT NOT NULL,  -- Nouveau champ pour la date de naissance
+                    phone TEXT NOT NULL,          -- Nouveau champ pour le téléphone
+                    address TEXT NOT NULL,
+                    postal_code TEXT NOT NULL,
+                    city TEXT NOT NULL,
+                    spoken_languages TEXT NOT NULL,
+                    avatar_url TEXT,
+                    insurance_number TEXT NOT NULL)''')
 
+        
     # Création de la table 'boats'
     cursor.execute('''CREATE TABLE IF NOT EXISTS boats
                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,6 +37,8 @@ def create_tables():
                     latitude REAL NOT NULL,
                     capacity TEXT NOT NULL,
                     location TEXT NOT NULL,
+                    longitude REAL NOT NULL,  -- Nouveau champ pour la longitude
+                    latitude REAL NOT NULL,   -- Nouveau champ pour la latitude
                     owner_id INTEGER NOT NULL,
                     FOREIGN KEY (owner_id) REFERENCES users(id))''')
 

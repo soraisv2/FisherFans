@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, Response  
-from models.boats import get_boats, add_boat, delete_boat, modify_boat, get_boat
+from models.boats import get_boats, add_boat, delete_boat, modify_boat, get_boat, get_boats_by_zone
 from models.users import get_user
 import json
 # JWT secure import
@@ -93,3 +93,20 @@ def remove_boat(boat_id):
 
     delete_boat(boat_id)
     return jsonify({"message": "Boat deleted successfully"}), 200
+
+@boats.route("/v1/boats_by_geo", methods=["GET"])
+@token_required
+def boats_by_geo():
+    data = request.get_json()
+    top_left = data['top_left']
+    bottom_right = data['bottom_right']
+
+    if not top_left["longitude"] or not top_left["latitude"] or not bottom_right["longitude"] or not bottom_right["latitude"]:
+        return jsonify({"code": 400, "message": "Missing required fields"}), 400
+
+    boats = get_boats_by_zone(top_left, bottom_right)
+    response = Response(
+        json.dumps(boats, indent=2, sort_keys=False),
+        mimetype='application/json; charset=utf-8'
+    )
+    return response, 200
