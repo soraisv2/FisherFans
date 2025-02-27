@@ -1,11 +1,19 @@
 from flask import Blueprint, request, jsonify, Response
 from models.fishing_trips import add_fishing_trip, get_fishing_trips, modify_fishing_trip, delete_fishing_trip, get_fishing_trip
+from models.users import get_user
+from models.boats import get_user_boats
 import json
+from app.utils import token_required
 
 fishing_trips_bp = Blueprint('fishing_trips', __name__)
 
 @fishing_trips_bp.route('/v1/fishing_trips', methods=['POST'])
+@token_required
 def create_fishing_trip():
+    user_id = request.user['user_id']
+    boats = get_user_boats(user_id)  # Récupère la liste des bateaux concernant l'utilisateur
+    if boats == []:
+        return jsonify({"message": "Cannot create a fishing log because the user does not have create boats."}), 400
     data = request.get_json()
     date = data.get('date')
     location = data.get('location')
@@ -31,6 +39,7 @@ def create_fishing_trip():
     return jsonify(response_data), 201
 
 @fishing_trips_bp.route('/v1/fishing_trips', methods=['GET'])
+@token_required
 def get_all_fishing_trips():
     filters = {}
     if 'date' in request.args:
@@ -54,6 +63,7 @@ def get_all_fishing_trips():
     return jsonify(response_data), 200
 
 @fishing_trips_bp.route('/v1/fishing_trips/<int:trip_id>', methods=['GET'])
+@token_required
 def get_fishing_trip_route(trip_id):
     trip = get_fishing_trip(trip_id)
     if trip:
@@ -69,6 +79,7 @@ def get_fishing_trip_route(trip_id):
     return jsonify({"message": "Fishing trip not found"}), 404
 
 @fishing_trips_bp.route('/v1/fishing_trips/<int:trip_id>', methods=['PUT'])
+@token_required
 def update_fishing_trip(trip_id):
     data = request.get_json()
     date = data.get('date')
@@ -93,6 +104,7 @@ def update_fishing_trip(trip_id):
     return jsonify(response_data), 200
 
 @fishing_trips_bp.route('/v1/fishing_trips/<int:trip_id>', methods=['DELETE'])
+@token_required
 def delete_fishing_trip_route(trip_id):
     trip = get_fishing_trip(trip_id)
     if not trip:

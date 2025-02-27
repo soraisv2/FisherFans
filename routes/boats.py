@@ -11,10 +11,14 @@ boats = Blueprint('boats', __name__)
 @boats.route("/v1/boats", methods=["GET"])
 @token_required
 def get_boats_route():
+    data = request.get_json()
     filters = {}
-    boat_type = request.args.get('type')
-    capacity = request.args.get('capacity')
-
+    boat_type = data["type"] if "type" in data else None
+    capacity = data["capacity"] if "capacity" in data else None
+    location = data["location"] if "location" in data else None
+    
+    if location:
+        filters['location'] = location
     if boat_type:
         filters['type'] = boat_type
     if capacity:

@@ -26,7 +26,6 @@ def add_user(lastName, firstName, email, password, boat_license_number, date_of_
     conn.close()
     return True, "Utilisateur ajouté avec succès ! ✅"
 
-
 def login_user(email, password):
     conn = sqlite3.connect(db_instance)
     cursor = conn.cursor()

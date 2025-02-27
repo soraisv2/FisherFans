@@ -47,11 +47,18 @@ def get_boats(filters=None):
             if "capacity" in filters:
                 conditions.append("capacity >= ?")
                 params.append(filters["capacity"])
+            if "location" in filters:
+                conditions.append("location = ?")
+                params.append(filters["location"])
             if "owner_id" in filters:
                 conditions.append("owner_id = ?")
                 params.append(filters["owner_id"])
+
             if conditions:
                 query += " WHERE " + " AND ".join(conditions)
+            
+        
+        print(query)
 
         cursor.execute(query, params)
         boats = cursor.fetchall()
@@ -69,6 +76,7 @@ def get_boats(filters=None):
             }
             for boat in boats
         ]
+
 
 def get_user_boats(user_id):
     filters = {"owner_id": user_id}
