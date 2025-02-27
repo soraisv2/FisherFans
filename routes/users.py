@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, session, redirect, url_for, curre
 from app.database import get_db
 from models.users import get_users, add_user, get_user, delete_user, modify_user, login_user
 from models.boats import get_user_boats
-from models.fishing_logs import get_user_fishing_log
+# from models.fishing_logs import get_user_fishing_log
 # from models.fishing_trips import get_user_trips
 # from models.reservation import get_user_reservations
 # JWT secure import
