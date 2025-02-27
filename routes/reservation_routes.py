@@ -1,10 +1,12 @@
 from flask import Blueprint, request, jsonify, session
 from app.database import get_db
 from models.reservation_model import add_reservation, get_reservations, delete_reservation, modify_reservation
+from app.utils import token_required
 
 reservation = Blueprint('reservation', __name__)
 
 @reservation.route('/reservation', methods=['POST'])
+@token_required
 def add_reservation_route():
     if 'user_id' not in session:
         return jsonify({"message": "You need to be connected to add a reservation"}), 401
@@ -13,6 +15,7 @@ def add_reservation_route():
     return jsonify({"message": "reservation added succefuly !"}), 200
 
 @reservation.route('/reservation', methods=['GET'])
+@token_required
 def get_reservation_route():
     data = request.get_json()
 
@@ -33,6 +36,7 @@ def get_reservation_route():
         }), 404
 
 @reservation.route('/reservation/<int:reservation_id>', methods=['DELETE'])
+@token_required
 def delete_reservation_route(reservation_id):
     delete_reservation(reservation_id)
     response = jsonify({"message": "Reservation deleted !"})
@@ -41,6 +45,7 @@ def delete_reservation_route(reservation_id):
 
 
 @reservation.route('/reservation/<int:reservation_id>', methods=['PUT'])
+@token_required
 def modify_reservation_route(reservation_id):
     data = request.get_json()
 
