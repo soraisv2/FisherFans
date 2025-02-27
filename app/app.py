@@ -28,6 +28,7 @@ def create_app():
     
     from routes.fishing_trips import fishing_trips_bp as fishing_trips_blueprint
     app.register_blueprint(fishing_trips_blueprint)
-
-
+    
+    from routes.reservation_routes import reservation as reservation_blueprint
+    app.register_blueprint(reservation_blueprint)
     return app
