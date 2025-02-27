@@ -20,8 +20,9 @@ def add_fishing_trip(date, location, fishing_type, boat_id):
 
 def get_fishing_trips(filters=None):
     with sqlite3.connect(db_instance) as conn:
+        conn.row_factory = sqlite3.Row  # Permet d'accéder aux résultats par nom de colonne
         cursor = conn.cursor()
-        query = "SELECT * FROM fishing_trips"
+        query = "SELECT id, date, location, fishing_type, boat_id FROM fishing_trips"
         params = []
 
         if filters:
@@ -37,14 +38,34 @@ def get_fishing_trips(filters=None):
 
         cursor.execute(query, params)
         trips = cursor.fetchall()
-    return trips
+        
+        # Convertir les résultats en une liste de dictionnaires avec l'ordre exact des clés
+        return [
+            {
+                "id": trip["id"],
+                "date": trip["date"],
+                "location": trip["location"],
+                "fishing_type": trip["fishing_type"],
+                "boat_id": trip["boat_id"]
+            }
+            for trip in trips
+        ]
 
 def get_fishing_trip(trip_id):
     with sqlite3.connect(db_instance) as conn:
+        conn.row_factory = sqlite3.Row  # Permet d'accéder aux résultats par nom de colonne
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM fishing_trips WHERE id = ?", (trip_id,))
+        cursor.execute("SELECT id, date, location, fishing_type, boat_id FROM fishing_trips WHERE id = ?", (trip_id,))
         trip = cursor.fetchone()
-    return trip
+        if trip:
+            return {
+                "id": trip["id"],
+                "date": trip["date"],
+                "location": trip["location"],
+                "fishing_type": trip["fishing_type"],
+                "boat_id": trip["boat_id"]
+            }
+        return None
 
 def modify_fishing_trip(trip_id, date, location, fishing_type):
     with sqlite3.connect(db_instance) as conn:

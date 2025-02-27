@@ -1,3 +1,5 @@
-venv
+venv/
+.env
 instance/database.db
-models/_pycache_
+__pycache__/
+.gitignore

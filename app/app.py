@@ -20,8 +20,14 @@ def create_app():
     from routes.users import users as users_blueprint
     app.register_blueprint(users_blueprint)
 
-    from routes.boat_routes import boat as boat_blueprint
+    from routes.boats import boats as boat_blueprint
     app.register_blueprint(boat_blueprint)
+
+    from routes.fishing_logs import fishing_logs_bp as fishing_logs_blueprint
+    app.register_blueprint(fishing_logs_blueprint)
+    
+    from routes.fishing_trips import fishing_trips_bp as fishing_trips_blueprint
+    app.register_blueprint(fishing_trips_blueprint)
     
     from routes.reservation_routes import reservation as reservation_blueprint
     app.register_blueprint(reservation_blueprint)
