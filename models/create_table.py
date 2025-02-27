@@ -54,7 +54,7 @@ def create_tables():
                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER NOT NULL,
                     boat_id INTEGER NOT NULL,
-                    fishing_type INTEGER NOT NULL,
+                    fishing_trip_id INTEGER NOT NULL,
                     date_reservation TEXT NOT NULL,
                     statut TEXT NOT NULL,
                     nbplace INTEGER NOT NULL,
@@ -63,7 +63,7 @@ def create_tables():
                     price FLOAT NOT NULL,
                     FOREIGN KEY (user_id) REFERENCES user(id),
                     FOREIGN KEY (boat_id) REFERENCES bateau(id),
-                    FOREIGN KEY (fishing_type) REFERENCES sortie_peche(id))''')
+                    FOREIGN KEY (fishing_trip_id) REFERENCES sortie_peche(id))''')
 
     
     conn.commit()

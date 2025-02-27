@@ -7,33 +7,33 @@ load_dotenv()
 
 db_instance = os.getenv("DB_INSTANCE")
 
-def add_reservation(utilisateur_id, bateau_id, sortie_peche_id, date_reservation, statut, nbplace, start_datetime, end_datetime, price):
+def add_reservation(user_id, boat_id, fishing_trip_id, date_reservation, statut, nbplace, start_datetime, end_datetime, price):
     conn = sqlite3.connect(db_instance)
     cursor = conn.cursor()
     cursor.execute('''INSERT INTO reservation 
-                      (utilisateur_id, bateau_id, sortie_peche_id, date_reservation, statut, nbplace, start_datetime, end_datetime, price)
+                      (user_id, boat_id, fishing_trip_id, date_reservation, statut, nbplace, start_datetime, end_datetime, price)
                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
-                   (utilisateur_id, bateau_id, sortie_peche_id, date_reservation, statut, nbplace, start_datetime, end_datetime, price))
+                   (user_id, boat_id, fishing_trip_id, date_reservation, statut, nbplace, start_datetime, end_datetime, price))
     
     conn.commit()
     conn.close()
 
-def get_reservations(utilisateur_id=None, bateau_id=None, sortie_peche_id=None, statut=None, start_datetime=None, end_datetime=None):
+def get_reservations(user_id=None, boat_id=None, fishing_trip_id=None, statut=None, start_datetime=None, end_datetime=None):
     conn = sqlite3.connect(db_instance)
     cursor = conn.cursor()
     
     query = "SELECT * FROM reservation WHERE 1=1"
     params = []
     
-    if utilisateur_id:
-        query += " AND utilisateur_id = ?"
-        params.append(utilisateur_id)
-    if bateau_id:
-        query += " AND bateau_id = ?"
-        params.append(bateau_id)
-    if sortie_peche_id:
-        query += " AND sortie_peche_id = ?"
-        params.append(sortie_peche_id)
+    if user_id:
+        query += " AND user_id = ?"
+        params.append(user_id)
+    if boat_id:
+        query += " AND boat_id = ?"
+        params.append(boat_id)
+    if fishing_trip_id:
+        query += " AND fishing_trip_id = ?"
+        params.append(fishing_trip_id)
     if statut:
         query += " AND statut = ?"
         params.append(statut)
@@ -50,7 +50,7 @@ def get_reservations(utilisateur_id=None, bateau_id=None, sortie_peche_id=None, 
     conn.close()
     return reservations
 
-def modify_reservation(reservation_id, bateau_id, sortie_peche_id, date_reservation, start_datetime, end_datetime):
+def modify_reservation(reservation_id, boat_id, fishing_trip_id, date_reservation, start_datetime, end_datetime):
     with sqlite3.connect(db_instance) as conn:
         cursor = conn.cursor()
 
@@ -63,20 +63,20 @@ def modify_reservation(reservation_id, bateau_id, sortie_peche_id, date_reservat
             return False
 
         # Log pour vérifier les valeurs actuelles et les nouvelles valeurs
-        print(f"Anciennes valeurs : bateau_id={reservation[1]}, sortie_peche_id={reservation[2]}, date_reservation={reservation[3]}, start_datetime={reservation[4]}, end_datetime={reservation[5]}")
+        print(f"Anciennes valeurs : boat_id={reservation[1]}, fishing_trip_id={reservation[2]}, date_reservation={reservation[3]}, start_datetime={reservation[4]}, end_datetime={reservation[5]}")
         
         # Récupérer les valeurs actuelles de la réservation
-        current_bateau_id = reservation[1]
-        current_sortie_peche_id = reservation[2]
+        current_boat_id = reservation[1]
+        current_fishing_trip_id = reservation[2]
         current_date_reservation = reservation[3]
         current_start_datetime = reservation[4]
         current_end_datetime = reservation[5]
 
         # Si la valeur est None, conserver la valeur actuelle
-        if bateau_id is None:
-            bateau_id = current_bateau_id
-        if sortie_peche_id is None:
-            sortie_peche_id = current_sortie_peche_id
+        if boat_id is None:
+            boat_id = current_boat_id
+        if fishing_trip_id is None:
+            fishing_trip_id = current_fishing_trip_id
         if date_reservation is None:
             date_reservation = current_date_reservation
         if start_datetime is None:
@@ -85,14 +85,14 @@ def modify_reservation(reservation_id, bateau_id, sortie_peche_id, date_reservat
             end_datetime = current_end_datetime
 
         # Log avant la mise à jour
-        print(f"Mise à jour avec : bateau_id={bateau_id}, sortie_peche_id={sortie_peche_id}, date_reservation={date_reservation}, start_datetime={start_datetime}, end_datetime={end_datetime}")
+        print(f"Mise à jour avec : boat_id={boat_id}, fishing_trip_id={fishing_trip_id}, date_reservation={date_reservation}, start_datetime={start_datetime}, end_datetime={end_datetime}")
         
         # Effectuer la mise à jour
         cursor.execute("""
             UPDATE reservation
-            SET bateau_id = ?, sortie_peche_id = ?, date_reservation = ?, start_datetime = ?, end_datetime = ?
+            SET boat_id = ?, fishing_trip_id = ?, date_reservation = ?, start_datetime = ?, end_datetime = ?
             WHERE id = ?
-        """, (bateau_id, sortie_peche_id, date_reservation, start_datetime, end_datetime, reservation_id))
+        """, (boat_id, fishing_trip_id, date_reservation, start_datetime, end_datetime, reservation_id))
 
         conn.commit()
 

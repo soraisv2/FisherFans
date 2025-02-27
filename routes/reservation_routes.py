@@ -9,20 +9,20 @@ def add_reservation_route():
     if 'user_id' not in session:
         return jsonify({"message": "You need to be connected to add a reservation"}), 401
     data = request.get_json()
-    add_reservation(data['utilisateur_id'], data['bateau_id'], data['sortie_peche_id'], data['date_reservation'], data['statut'], data['nbplace'], data['start_datetime'], data['end_datetime'], data['price'])
+    add_reservation(data['user_id'], data['boat_id'], data['fishing_trip_id'], data['date_reservation'], data['statut'], data['nbplace'], data['start_datetime'], data['end_datetime'], data['price'])
     return jsonify({"message": "reservation added succefuly !"}), 200
 
 @reservation.route('/reservation', methods=['GET'])
 def get_reservation_route():
     data = request.get_json()
 
-    reservation_utilisateur_id = data["utilisateur_id"] if "utilisateur_id" in data else None
-    reservation_bateau_id = data["bateau_id"] if "bateau_id" in data else None
-    reservation_sortie_peche_id = data["sortie_peche_id"] if "sortie_peche_id" in data else None
+    reservation_user_id = data["user_id"] if "user_id" in data else None
+    reservation_boat_id = data["boat_id"] if "boat_id" in data else None
+    reservation_fishing_trip_id = data["fishing_trip_id"] if "fishing_trip_id" in data else None
     reservation_statut = data["statut"] if "statut" in data else None
     reservation_start_datetime = data["start_datetime"] if "start_datetime" in data else None
     reservation_end_datetime = data["end_datetime"] if "end_datetime" in data else None
-    reservations = get_reservations(utilisateur_id=reservation_utilisateur_id, bateau_id=reservation_bateau_id, sortie_peche_id=reservation_sortie_peche_id, statut=reservation_statut, start_datetime=reservation_start_datetime, end_datetime=reservation_end_datetime)
+    reservations = get_reservations(user_id=reservation_user_id, boat_id=reservation_boat_id, fishing_trip_id=reservation_fishing_trip_id, statut=reservation_statut, start_datetime=reservation_start_datetime, end_datetime=reservation_end_datetime)
     if reservations:
         return jsonify({
             "reservations": reservations
@@ -46,8 +46,8 @@ def modify_reservation_route(reservation_id):
 
     success = modify_reservation(
         reservation_id=reservation_id,
-        bateau_id=data.get('bateau_id'),
-        sortie_peche_id=data.get('sortie_peche_id'),
+        boat_id=data.get('boat_id'),
+        fishing_trip_id=data.get('fishing_trip_id'),
         date_reservation=data.get('date_reservation'),
         start_datetime=data.get('start_datetime'),
         end_datetime=data.get('end_datetime')
