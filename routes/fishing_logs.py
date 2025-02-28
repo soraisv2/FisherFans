@@ -6,10 +6,12 @@ from models.fishing_logs import (
 )
 from flask import Response
 import json
+from app.utils import token_required
 
 fishing_logs_bp = Blueprint('fishing_logs', __name__)
 
 @fishing_logs_bp.route('/v1/fishing_logs', methods=['GET'])
+@token_required
 def get_fishing_logs_route():
     try:
         filters = {}
@@ -36,6 +38,7 @@ def get_fishing_logs_route():
         }), 400
 
 @fishing_logs_bp.route('/v1/fishing_logs', methods=['POST'])
+@token_required
 def create_fishing_log():
     try:
         data = request.get_json()
@@ -78,6 +81,7 @@ def create_fishing_log():
 
 
 @fishing_logs_bp.route('/v1/fishing_logs/<int:log_id>', methods=['GET'])
+@token_required
 def get_fishing_log_route(log_id):
     log = get_fishing_log(log_id)
     if log:
@@ -88,6 +92,7 @@ def get_fishing_log_route(log_id):
     }), 404
 
 @fishing_logs_bp.route('/v1/fishing_logs/<int:log_id>', methods=['PUT'])
+@token_required
 def modify_fishing_log_route(log_id):
     try:
         data = request.get_json()
@@ -124,6 +129,7 @@ def modify_fishing_log_route(log_id):
         }), 400
 
 @fishing_logs_bp.route('/v1/fishing_logs/<int:log_id>', methods=['DELETE'])
+@token_required
 def delete_fishing_log_route(log_id):
     try:
         log = get_fishing_log(log_id)
@@ -142,6 +148,7 @@ def delete_fishing_log_route(log_id):
         }), 400
 
 @fishing_logs_bp.route('/v1/fishing_logs/<int:log_id>/entries', methods=['POST'])
+@token_required
 def create_fishing_log_entry(log_id):
     try:
         data = request.get_json()
@@ -187,6 +194,7 @@ def create_fishing_log_entry(log_id):
         }), 400
 
 @fishing_logs_bp.route('/v1/fishing_logs/<int:log_id>/entries/<int:entry_id>', methods=['PUT'])
+@token_required
 def update_fishing_log_entry_route(log_id, entry_id):
     try:
         data = request.get_json()
@@ -216,6 +224,7 @@ def update_fishing_log_entry_route(log_id, entry_id):
         }), 400
 
 @fishing_logs_bp.route('/v1/fishing_logs/<int:log_id>/entries/<int:entry_id>', methods=['DELETE'])
+@token_required
 def delete_fishing_log_entry_route(log_id, entry_id):
     try:
         if delete_fishing_log_entry(log_id, entry_id):

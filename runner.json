@@ -26,7 +26,7 @@
                 },
                 "body": {
                     "mode": "raw",
-                    "raw": "{\"action\": \"register\", \"last_name\": \"Dupont\", \"first_name\": \"Jean\", \"email\": \"jean.dupont@example.com\", \"password\": \"SecurePassword123\", \"date_of_birth\": \"1990-01-15\", \"phone\": \"+33612345678\", \"address\": \"123 Rue de Paris\", \"postal_code\": \"75001\", \"city\": \"Paris\", \"spoken_languages\": [\"French\", \"English\"], \"avatar_url\": \"https://example.com/avatars/jean.jpg\", \"boat_license_number\": \"12345678\", \"insurance_number\": \"ABC123DEF456G\"}"
+                    "raw": "{\"action\": \"register\", \"last_name\": \"Dupont\", \"first_name\": \"Jean\", \"email\": \"jean.dupont@example.com\", \"password\": \"SecurePassword123\", \"date_of_birth\": \"1990-01-15\", \"phone\": \"+33612345678\", \"address\": \"123 Rue de Paris\", \"postal_code\": \"75001\", \"city\": \"Paris\", \"spoken_languages\": [\"French\", \"English\"], \"avatar_url\": \"https://example.com/avatars/jean.jpg\", \"boat_license_number\": \"\", \"insurance_number\": \"ABC123DEF456G\"}"
                 }
             },
             "response": []
@@ -53,7 +53,7 @@
                 },
                 "body": {
                     "mode": "raw",
-                    "raw": "{\"action\": \"login\", \"email\": \"test{{timestamp}}@mail.com\", \"password\": \"password123\"}"
+                    "raw": "{\"action\": \"login\", \"email\": \"jean.dupont@example.com\", \"password\": \"SecurePassword123\"}"
                 }
             },
             "response": [],
@@ -118,6 +118,37 @@
             "response": []
         },
         {
+            "name": "Create Boat",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{vault:json-web-token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}:{{PORT}}/{{VERSION}}/boats",
+                    "host": [
+                        "{{baseUrl}}:{{PORT}}"
+                    ],
+                    "path": [
+                        "{{VERSION}}",
+                        "boats"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"name\": \"Sea Explorer\",\n  \"type\": \"Yacht\",\n  \"capacity\": 8,\n  \"location\": \"Marina Bay\",\n  \"longitude\": \"45.764\",\n  \"latitude\": \"4.8357\",\n  \"owner_id\": \"{{user_id}}\"\n}"
+                }
+            },
+            "response": []
+        },
+        {
             "name": "Modify User",
             "request": {
                 "method": "PUT",
@@ -144,15 +175,15 @@
                 },
                 "body": {
                     "mode": "raw",
-                    "raw": "{\"lastName\": \"DoeModified\", \"firstName\": \"JohnModified\", \"email\": \"modified{{timestamp}}@mail.com\", \"boat_license_number\": \"654321\"}"
+                    "raw": "{\"lastName\": \"DoeModified\", \"firstName\": \"JohnModified\", \"email\": \"jean.dupont@example.com\", \"boat_license_number\": \"654321\"}"
                 }
             },
             "response": []
         },
         {
-            "name": "Delete User",
+            "name": "Create Boat",
             "request": {
-                "method": "DELETE",
+                "method": "POST",
                 "header": [
                     {
                         "key": "Content-Type",
@@ -164,15 +195,260 @@
                     }
                 ],
                 "url": {
-                    "raw": "{{baseUrl}}:{{PORT}}/{{VERSION}}/users/{{user_id}}",
+                    "raw": "{{baseUrl}}:{{PORT}}/{{VERSION}}/boats",
                     "host": [
                         "{{baseUrl}}:{{PORT}}"
                     ],
                     "path": [
                         "{{VERSION}}",
-                        "users",
-                        "{{user_id}}"
+                        "boats"
                     ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"name\": \"Sea Explorer\",\n  \"type\": \"Yacht\",\n  \"capacity\": 8,\n  \"location\": \"Marina Bay\",\n  \"longitude\": \"45.764\",\n  \"latitude\": \"4.8357\",\n  \"owner_id\": \"{{user_id}}\"\n}"
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Boat",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{vault:json-web-token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}:{{PORT}}/{{VERSION}}/boats",
+                    "host": [
+                        "{{baseUrl}}:{{PORT}}"
+                    ],
+                    "path": [
+                        "{{VERSION}}",
+                        "boats"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"name\": \"BigBoy\",\n  \"type\": \"Yacht\",\n  \"capacity\": 32,\n  \"location\": \"Cannes\",\n  \"longitude\": \"43.764\",\n  \"latitude\": \"3.8357\",\n  \"owner_id\": \"{{user_id}}\"\n}"
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Boat",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{vault:json-web-token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}:{{PORT}}/{{VERSION}}/boats",
+                    "host": [
+                        "{{baseUrl}}:{{PORT}}"
+                    ],
+                    "path": [
+                        "{{VERSION}}",
+                        "boats"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"name\": \"Marie\",\n  \"type\": \"Kayak\",\n  \"capacity\": 2,\n  \"location\": \"Mandelieu\",\n  \"longitude\": \"42.764\",\n  \"latitude\": \"2.8357\",\n  \"owner_id\": \"{{user_id}}\"\n}"
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Fishing Trip",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{vault:json-web-token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}:{{PORT}}/{{VERSION}}/fishing_trips",
+                    "host": [
+                        "{{baseUrl}}:{{PORT}}"
+                    ],
+                    "path": [
+                        "{{VERSION}}",
+                        "fishing_trips"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"date\": \"2025-03-01\",\n  \"location\": \"Lake Superior\",\n  \"fishing_type\": \"Deep Sea\",\n  \"boat_id\": \"1\"\n}"
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Reservation",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{vault:json-web-token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}:{{PORT}}/{{VERSION}}/reservations",
+                    "host": [
+                        "{{baseUrl}}:{{PORT}}"
+                    ],
+                    "path": [
+                        "{{VERSION}}",
+                        "reservations"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"boat_id\": \"1\",\n  \"fishing_trip_id\": \"1\",\n  \"date_reservation\": \"2025-03-10\",\n  \"statut\": \"confirmed\",\n  \"nbplace\": 2,\n  \"start_datetime\": \"2025-03-10T08:00:00\",\n  \"end_datetime\": \"2025-03-10T12:00:00\",\n  \"price\": 150.00\n}"
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Fishing Log",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{vault:json-web-token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}:{{PORT}}/{{VERSION}}/fishing_logs",
+                    "host": [
+                        "{{baseUrl}}:{{PORT}}"
+                    ],
+                    "path": [
+                        "{{VERSION}}",
+                        "fishing_logs"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"title\": \"First Fishing Log\",\n  \"description\": \"Caught a big fish today!\",\n  \"user_id\": \"{{user_id}}\",\n  \"fishing_trip_id\": \"1\"\n}"
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Delete Boat",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{vault:json-web-token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}:{{PORT}}/{{VERSION}}/boats/1",
+                    "host": [
+                        "{{baseUrl}}:{{PORT}}"
+                    ],
+                    "path": [
+                        "{{VERSION}}",
+                        "boats",
+                        "1"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Update Boat",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{vault:json-web-token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}:{{PORT}}/{{VERSION}}/boats/2",
+                    "host": [
+                        "{{baseUrl}}:{{PORT}}"
+                    ],
+                    "path": [
+                        "{{VERSION}}",
+                        "boats",
+                        "2"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"name\": \"Updated BigBoy\",\n  \"type\": \"Yacht\",\n  \"capacity\": 25,\n  \"location\": \"Dock 3\"\n}"
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Boats",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{vault:json-web-token}}"
+                    },
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}:{{PORT}}/{{VERSION}}/boats",
+                    "host": [
+                        "{{baseUrl}}:{{PORT}}"
+                    ],
+                    "path": [
+                        "{{VERSION}}",
+                        "boats"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"type\": \"Yacht\"\n}"
                 }
             },
             "response": []

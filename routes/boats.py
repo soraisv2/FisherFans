@@ -31,21 +31,21 @@ def get_boats_route():
     )
     return response, 200
 
-
 @boats.route("/v1/boats", methods=["POST"])
 @token_required
 def create_boat():
     data = request.get_json()
+    user_id = request.user['user_id']
 
-    required_fields = ["name", "type", "capacity", "location", "owner_id", "longitude", "latitude"]
+    required_fields = ["name", "type", "capacity", "location", "longitude", "latitude"]
     if not all(field in data for field in required_fields):
         return jsonify({"code": 400, "message": "Missing required fields"}), 400
 
     boat = add_boat(
-        data["name"], data["type"], data["capacity"], data["location"], data["owner_id"], data["longitude"], data["latitude"]
+        data["name"], data["type"], data["capacity"], data["location"], user_id, data["longitude"], data["latitude"]
     )
 
-    user = get_user(data["owner_id"])
+    user = get_user(user_id)
     if not user:
         return jsonify({"message": "User not found"}), 404
 
@@ -88,12 +88,6 @@ def remove_boat(boat_id):
     boat = get_boat(boat_id)
     if not boat:
         return jsonify({"code": 404, "message": "Boat not found"}), 404
-
-    # Vérification des autorisations avant de supprimer
-    # Par exemple, si l'utilisateur n'est pas le propriétaire du bateau ou n'a pas les permissions
-    # Cela dépend de la logique de ton application
-    # if not user_has_permission_to_delete(boat_id):
-    #     return jsonify({"code": 403, "message": "Forbidden - Not authorized to delete this boat"}), 403
 
     delete_boat(boat_id)
     return jsonify({"message": "Boat deleted successfully"}), 200

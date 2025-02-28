@@ -119,24 +119,32 @@ def get_all_users():
     else:
         return jsonify({"message": "Error while retrieving users. 🛑"}), 404
 
-
-
 @users.route('/v1/users/<int:user_id>', methods=['PUT'])
 @token_required
 def modify_user_route(user_id):
     data = request.get_json()
 
-    # Vérifier que tous les champs requis sont présents et non vides
+    # Vérifier que toutes les clés requises sont présentes
     required_fields = ["lastName", "firstName", "email", "boat_license_number"]
-    if not all(field in data and data[field] for field in required_fields):
-        return jsonify({"message": "Tous les champs doivent être remplis. 🛑"}), 400  # 400 = Bad Request
+    if not all(field in data for field in required_fields):
+        return jsonify({"message": "Tous les champs doivent être présents, même si les valeurs sont vides. 🛑"}), 400  # 400 = Bad Request
 
     user = get_user(user_id)
     if user:
-        modify_user(user_id, data["lastName"], data["firstName"], data["email"], data["boat_license_number"])
+        # Modifie les champs qui existent dans la requête, s'ils ne sont pas vides
+        if data.get("lastName"):
+            modify_user(user_id, data["lastName"], data["firstName"], data["email"], data["boat_license_number"])
+        if data.get("firstName"):
+            modify_user(user_id, data["lastName"], data["firstName"], data["email"], data["boat_license_number"])
+        if data.get("email"):
+            modify_user(user_id, data["lastName"], data["firstName"], data["email"], data["boat_license_number"])
+        if data.get("boat_license_number"):
+            modify_user(user_id, data["lastName"], data["firstName"], data["email"], data["boat_license_number"])
+            
         return jsonify({"message": f"Utilisateur avec l'id {user_id} modifié avec succès ! ✅"}), 200
     else:
         return jsonify({"message": "Utilisateur non trouvé. 🛑"}), 404  # 404 = Not Found
+
 
 
 @users.route('/v1/users/<int:user_id>', methods=['DELETE'])
